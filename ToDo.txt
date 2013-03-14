@@ -1,0 +1,14 @@
+- Zugriff auf Member anderer Instanzen INSTANCE->MEMBER
+- Zugriff auf Static Member anderer Klassen CLASS=>MEMBER
+. Kommentare oder besser Debug-Informationen ins CIL
+- CALL METHOD
+- METHOD parameters
+- Constants-Anweisung
+- Strukturen
+- Klammern in mathematischen Ausdrücken
+- COMPUTE Methoden in IfValue
+- Runtimeklassen für Datentypen, Strukturen, interen Tabellen
+- Framework zum Ausführen eines Programms und Abholung der STDOUT-Rückgabe
+- CilFile Methoden zum komfortablen Schreiben der Standard Ausdrücke
+- Datenbankanbindung
+- HTTP-Dienst
