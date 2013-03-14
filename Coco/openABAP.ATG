@@ -1,0 +1,359 @@
+using System.Collections;
+using System.Text;
+using System.Reflection;
+using openABAP.Compiler;
+
+COMPILER openABAP
+
+/*------------------------------------------------------------------------*/
+	public Program Program = null;
+	private Class CurrentClass = null;
+	private Method CurrentMethod = null;
+	private Visibility CurrentVisibility = Visibility.publ;
+
+	public void AddMethod( Method m )
+	{
+		if (CurrentClass != null) 
+		{
+			CurrentClass.AddMethod( m );
+		} else {
+			throw new CompilerError("method definition " + m.Name + " outside a class");
+		}
+	}
+
+	public void AddCommand( Command cmd )
+	{
+		if (CurrentMethod != null) 
+		{
+			CurrentMethod.AddCommand( cmd );
+		} else {
+			throw new CompilerError("command outside a method");
+		}
+	}
+
+	public void AddData( Data data )
+	{
+		if (CurrentMethod != null) 
+		{
+			try {
+				CurrentMethod.AddLocalData( data );	
+			} catch (ArgumentException) {
+				throw new CompilerError("data" + data.Name + " already defined in method" ); 
+			}
+		} 
+		else if (CurrentClass != null)
+		{
+			CurrentClass.AddAttribute( data );
+		}
+		else {
+			//fehler
+			throw new CompilerError("missplaced data declaration");
+		}				
+	}
+	
+	public Data GetVariable(string name)
+	{
+		Data result = null;
+		if (CurrentMethod != null) 
+		{
+			result = CurrentMethod.GetLocalData(name);
+		}
+		if (result == null && CurrentClass != null) 
+		{
+			result = CurrentClass.GetAttribute(name);
+		}
+		if (result == null) {
+			throw new CompilerError("unknown variable " + name);
+		}
+		return result;
+	}
+
+/*------------------------------------------------------------------------*/
+
+IGNORECASE
+
+/*------------------------------------------------------------------------*/
+CHARACTERS
+/*------------------------------------------------------------------------*/
+
+	tab                = '\u0009'. /*  9 = tabulator */
+	eol                = '\u000a'. /* 10 = line feed */
+	cr                 = '\u000d'. /* 13 = carriage return */
+	newLine            = cr + eol. /* Line separator character (U+2028) + Paragraph separator character (U+2029) */
+
+	letter             = 'A' .. 'Z' + 'a' .. 'z' + '_'.
+	digit              = "0123456789".
+	notDigit           = ANY - digit.
+
+    apostrophe         = '\''.
+    anyButApostrophe   = ANY - apostrophe.
+
+	char               = ANY - "\"" - newLine.
+	notNewLine         = ANY - newLine .
+	ws                 = " " + tab + '\u000b' + '\u000c' + newLine. 
+	
+    colon              = ":".
+    
+/*------------------------------------------------------------------------*/
+TOKENS
+/*------------------------------------------------------------------------*/
+	number             = digit { digit }.
+	string             = '\'' { anyButApostrophe } '\''.     
+	
+	ident              = letter { letter | digit }.
+	
+	SPACE              = ws { ws }.
+	
+	DOT                = '.'.
+	MINUS              = "-".
+	PLUS               = "+".
+	MULTIPLY           = "*".
+	DIVIDE             = "/".
+
+	PROGRAM            = "program".
+	CLASS              = "class".
+	DEFINITION         = "definition".
+	IMPLEMENTATION     = "implementation".
+	ENDCLASS           = "endclass".
+	PUBLIC             = "public".
+	PROTECTED          = "protected".
+	PRIVATE            = "private".
+	SECTION            = "section".
+	METHODS            = "methods".
+	CLASS_METHODS      = "class-methods".
+	METHOD             = "method".
+	ENDMETHOD          = "endmethod".
+	WRITE              = "write".
+	DATA               = "data".
+	CLASS_DATA         = "class-data".
+	TYPE               = "type".
+	LENGTH             = "length".
+	DECIMALS           = "decimals".
+	NO_SIGN            = "no-sign".
+	MOVE               = "move".
+	to                 = "to".
+    
+/*------------------------------------------------------------------------*/
+PRAGMAS
+/*------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------*/
+COMMENTS FROM eol "*"  TO eol
+COMMENTS FROM "\""  TO eol
+
+/*------------------------------------------------------------------------*/
+IGNORE tab + cr + eol
+
+/*------------------------------------------------------------------------*/
+PRODUCTIONS
+/*------------------------------------------------------------------------*/
+
+openABAP                                     
+=  PROGRAM ident (. Program.Name = t.val; .) DOT
+  { class_command }
+.
+
+/*------------------------------------------------------------------------*/
+class_command
+=  CLASS 
+  ident                       
+  ( class_definition<t.val> | 
+    class_implementation<t.val> )
+.
+
+class_definition<string name>
+= DEFINITION DOT               (. CurrentClass = new Class( name ); Program.AddClass( CurrentClass ); .)
+  [ public_section ] 
+  [ protected_section ] 
+  [ private_section ] 
+  ENDCLASS DOT                 (. CurrentClass = null; .)
+.
+
+class_implementation<string name>
+= IMPLEMENTATION DOT           (. CurrentClass = Program.GetClass( name ); .)
+  { method_command }
+  ENDCLASS DOT                 (. CurrentClass = null; .)
+.
+
+public_section
+= PUBLIC SECTION DOT           (. CurrentVisibility = Visibility.publ; .)
+  { section }
+.
+protected_section
+= PROTECTED SECTION DOT        (. CurrentVisibility = Visibility.prot; .)
+  { section }
+.
+private_section
+= PRIVATE SECTION DOT          (. CurrentVisibility = Visibility.prot; .)
+  { section }
+.
+
+section
+=   methods_command  | class_methods_command  
+  | data_command     | class_data_command
+.
+
+methods_command
+= METHODS ident                (. CurrentMethod = new Method(name:t.val, v:CurrentVisibility ); .)
+  DOT                          (. AddMethod( CurrentMethod ); CurrentMethod = null; .)
+.
+
+class_methods_command
+= CLASS_METHODS ident          (. CurrentMethod = new Method(name:t.val, v:CurrentVisibility, staticMember:true ); .)
+  DOT                          (. AddMethod( CurrentMethod ); CurrentMethod = null; .)
+.
+  
+method_command
+= METHOD ident                 (. CurrentMethod = CurrentClass.GetMethod( t.val ); .) 
+  DOT
+  { command }
+  ENDMETHOD DOT                (. CurrentMethod =  null; .)
+.
+
+/*------------------------------------------------------------------------*/
+command
+= ( data_command
+  | write_command 
+  | move_command 
+  | compute_command )
+.
+
+/*------------------------------------------------------------------------*/
+data_command 
+= DATA ident                (. Compiler.Data cmd = new Compiler.Data(name:t.val, c:CurrentClass, v:CurrentVisibility); .) 
+  [ data_type<cmd> ]
+  DOT                                     (. AddData( cmd ); .)   
+.
+
+class_data_command 
+= CLASS_DATA ident          (. Compiler.Data cmd = new Compiler.Data(name:t.val, c:CurrentClass, v:CurrentVisibility, staticMember:true); .) 
+  [ data_type<cmd> ]
+  DOT                                     (. AddData( cmd ); .)   
+.
+
+data_type<Compiler.Data cmd>              (. Runtime.BuildinType aType; .)
+= TYPE 
+         ( ident                          (. cmd.setType( new Runtime.NamedType(t.val) ); .)
+         | buildintype<out aType>         (. cmd.setType( aType ); .)
+         )  
+.
+
+buildintype <out Runtime.BuildinType aType>  (. aType = null; .)
+= 
+  ( fixlentype <out aType> 
+  | varlentype <out aType> 
+  | packedtype <out aType>
+  )
+.
+
+fixlentype <out Runtime.BuildinType aType>	  (. aType = null; .)
+= ( "i"                                   (. aType = new Runtime.BuildinType( Runtime.InternalType.i ); .)
+  | "d"                                   (. aType = new Runtime.BuildinType( Runtime.InternalType.d ); .)
+  | "t"                                   (. aType = new Runtime.BuildinType( Runtime.InternalType.t ); .)
+  )                      
+.
+  
+varlentype <out Runtime.BuildinType aType>   (. aType = null; .)
+  = ( "c"                                 (. aType = new Runtime.BuildinType( Runtime.InternalType.c ); .)
+    | "n"                                 (. aType = new Runtime.BuildinType( Runtime.InternalType.n ); .)
+    ) 
+  [LENGTH number              (. aType.setLength( Convert.ToInt32(t.val) ); .)  ]
+.
+
+packedtype <out Runtime.BuildinType aType>   (. aType = null; .)   
+= "p"                                        (. aType = new Runtime.BuildinType( Runtime.InternalType.p ); .)
+  [LENGTH number                 (. aType.setLength( Convert.ToInt32(t.val) ); .) ]
+  [DECIMALS number]
+  [NO_SIGN]
+.
+
+/*------------------------------------------------------------------------*/
+write_command
+= WRITE
+  (  ":" write_parameter { "," write_parameter } 
+  |      write_parameter
+  ) DOT 
+.
+
+write_parameter                                    (. Compiler.Value aValue; string aFormat=""; .)
+= [format<out aFormat>] value<out aValue>  (. AddCommand( new Write(aValue, aFormat) ); .)
+.
+
+format<out string format>
+= "/"                                (. format = t.val; .)
+.
+
+value <out Compiler.Value value>     (. value = null; .)
+= ( literal<out value> 
+  | variable<out value> 
+  ).
+  
+literal <out Compiler.Value value>   (. value = null; .)
+= ( string                           (. value = new Compiler.StringLiteral( t.val.Substring(1,t.val.Length-2) ); .)
+  | number                           (. value = new Compiler.IntegerLiteral( Convert.ToInt32( t.val) ); .)
+  )
+.
+
+variable <out Compiler.Value variable>   (. Scanner.ignore_space = false; .)
+= {SPACE} ident                          (. variable = GetVariable(t.val); .) 
+  { ( instance_member | class_member ) } 
+  { struct_field }  
+  [ "+" number ]
+  [ "(" number ")" ]   
+  {SPACE}                                (. Scanner.ignore_space = true; .)
+.                                      
+
+instance_member
+= "->" ident
+.
+
+class_member
+= "=>" ident
+.
+
+struct_field
+= "-" ident
+.
+
+
+/*------------------------------------------------------------------------*/
+move_command                              (. Compiler.Value aValue; Move move = new Move(); AddCommand( move ); .)
+= MOVE value <out aValue>   (. move.setSource( aValue ); .)           
+    to variable <out aValue>  (. move.setTarget( (Data)aValue ); .)
+  DOT
+.
+
+/*------------------------------------------------------------------------*/
+compute_command                       (. Value target; Compute cmd = new Compute(); .)
+= variable <out target>       (. cmd.Target = (Data)target; .)
+  "=" expression <out cmd.Expression>  
+  DOT                                 (. AddCommand( cmd ); .)
+.
+
+expression <out Compiler.IfExpression e> (. e=null; string op; IfExpression e2; .)
+= ( MINUS term <out e2>                  (. e = new UnaryExpression ("-", e2 ); .)
+  |       term <out e> 
+  )
+  { addition <out op>
+    term <out e2>                        (. e = new BinaryExpression(e, op, e2); .)
+  }
+.
+
+term <out Compiler.IfExpression e>       (. string op; IfExpression e2; e=null; .)
+= factor <out e> 
+  { multiply <out op> 
+    factor <out e2>                      (. e = new BinaryExpression(e, op, e2); .)
+  }
+.
+
+factor <out Compiler.IfExpression e>     (. Compiler.Value val; e=null; .)
+= (       value <out val>                (. e = new ExpressionLeaf( val ); .)
+  | "(" expression <out  e>  ")" 
+  )
+.
+
+addition <out string op> = ( PLUS     | MINUS )  (. op = t.val; .).
+multiply <out string op> = ( MULTIPLY | DIVIDE ) (. op = t.val; .).
+
+/*------------------------------------------------------------------------*/
+END openABAP.

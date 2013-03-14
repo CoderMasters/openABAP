@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ADB5F23D-910E-4825-93DF-21B021B068F2}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>openABAP</RootNamespace>
+    <AssemblyName>openABAP</AssemblyName>
+    <CodePage>65001</CodePage>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>2</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+    <Commandlineparameters>../../ABAP/Test.abap</Commandlineparameters>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeBuild" command="Coco/coco.exe Coco/openABAP.ATG -namespace openABAP.Coco" workingdir="${SolutionDir}" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <GenerateDocumentation>True</GenerateDocumentation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Compiler\Main.cs" />
+    <Compile Include="Compiler\CompilerError.cs" />
+    <Compile Include="Coco\Parser.cs" />
+    <Compile Include="Coco\Scanner.cs" />
+    <Compile Include="Compiler\Class.cs" />
+    <Compile Include="Compiler\Command.cs" />
+    <Compile Include="Compiler\Data.cs" />
+    <Compile Include="Compiler\Method.cs" />
+    <Compile Include="Compiler\Move.cs" />
+    <Compile Include="Compiler\Program.cs" />
+    <Compile Include="Compiler\Write.cs" />
+    <Compile Include="Compiler\Types.cs" />
+    <Compile Include="Compiler\Literal.cs" />
+    <Compile Include="Compiler\Value.cs" />
+    <Compile Include="Compiler\Compiler.cs" />
+    <Compile Include="Compiler\CilFile.cs" />
+    <Compile Include="Compiler\Expression.cs" />
+    <Compile Include="Compiler\Compute.cs" />
+    <Compile Include="Compiler\Variable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ABAP\Test.abap" />
+    <None Include="ToDo.txt" />
+    <None Include="Coco\Coco.exe" />
+    <None Include="Coco\openABAP.ATG" />
+    <None Include="Coco\Parser.cs.old" />
+    <None Include="Coco\Parser.frame" />
+    <None Include="Coco\Scanner.cs.old" />
+    <None Include="Coco\Scanner.frame" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <MonoDevelop.Autotools.MakefileInfo RelativeMakefileName="Makefile">
+          <BuildFilesVar />
+          <DeployFilesVar />
+          <ResourcesVar />
+          <OthersVar />
+          <GacRefVar />
+          <AsmRefVar />
+          <ProjectRefVar />
+        </MonoDevelop.Autotools.MakefileInfo>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="ABAP\" />
+    <Folder Include="Coco\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Runtime\Runtime.csproj">
+      <Project>{D3977A6D-9C94-44F7-B8E0-DB68778C44EE}</Project>
+      <Name>Runtime</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,30 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Coco/openABAP.ATG">
+    <Files>
+      <File FileName="Coco/openABAP.ATG" Line="360" Column="1" />
+      <File FileName="ABAP/Test.abap" Line="32" Column="18" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Compiler" expanded="True">
+            <Node name="ABAP" expanded="True" />
+            <Node name="Coco" expanded="True">
+              <Node name="openABAP.ATG" selected="True" />
+            </Node>
+            <Node name="Compiler" expanded="True" />
+          </Node>
+          <Node name="Runtime" expanded="True" />
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
