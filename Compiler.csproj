@@ -12,31 +12,33 @@
     <CodePage>65001</CodePage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>2</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>False</ConsolePause>
+    <ConsolePause>false</ConsolePause>
     <Commandlineparameters>../../ABAP/Test.abap</Commandlineparameters>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="Coco/coco.exe Coco/openABAP.ATG -namespace openABAP.Coco" workingdir="${SolutionDir}" pauseExternalConsole="True" />
+        <Command type="BeforeBuild" command="./Coco.exe openABAP.ATG -namespace openABAP.Coco" workingdir="${SolutionDir}/Coco" externalConsole="true" pauseExternalConsole="true" />
+        <Command type="BeforeExecute" command="cp ${SolutionDir}/Http/*.js ${TargetDir}" externalConsole="true" />
+        <Command type="BeforeExecute" command="cp ${SolutionDir}/Http/*.abap ${TargetDir}" externalConsole="true" />
       </CustomCommands>
     </CustomCommands>
-    <GenerateDocumentation>True</GenerateDocumentation>
+    <GenerateDocumentation>true</GenerateDocumentation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>False</ConsolePause>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -59,6 +61,8 @@
     <Compile Include="Compiler\Expression.cs" />
     <Compile Include="Compiler\Compute.cs" />
     <Compile Include="Compiler\Variable.cs" />
+    <Compile Include="Http\SimpleHttpServer.cs" />
+    <Compile Include="Http\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ABAP\Test.abap" />
@@ -69,6 +73,8 @@
     <None Include="Coco\Parser.frame" />
     <None Include="Coco\Scanner.cs.old" />
     <None Include="Coco\Scanner.frame" />
+    <None Include="Http\client.js" />
+    <None Include="Http\Test.abap" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -88,6 +94,7 @@
   <ItemGroup>
     <Folder Include="ABAP\" />
     <Folder Include="Coco\" />
+    <Folder Include="Http\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

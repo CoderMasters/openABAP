@@ -18,36 +18,25 @@ namespace openABAP.Compiler
 		
 		private Coco.Scanner Scanner = null;
 		private Coco.Parser  Parser  = null; 
-    	private FileStream   Stream  = null;
+    	private Stream       Source  = null;
 		
-		public  string Filename;
 		public System.IO.FileInfo SourceFileInfo = null; 
 		public System.IO.FileInfo ExeFileInfo    = null; 		
 		public System.IO.FileInfo CilFileInfo    = null; 
 
-/// <summary>
-/// initializes a new instance of the <see cref="openABAP.Compiler.Compiler"/> class.
-/// </summary>
-/// <param name='filename'>
-/// fullpath to abap source file.
-/// </param>
-		public Compiler( string filename )
+		public Compiler( Stream source )
 		{
-			this.Filename = filename;
-			this.SourceFileInfo = new System.IO.FileInfo( filename );
-			this.CilFileInfo    = new System.IO.FileInfo( this.SourceFileInfo.Name.Replace( SourceFileInfo.Extension, ".cil") );
-			this.ExeFileInfo    = new System.IO.FileInfo( this.SourceFileInfo.Name.Replace( SourceFileInfo.Extension, ".exe") );
-			
-			this.Stream  = this.SourceFileInfo.OpenRead();
-			this.Scanner = new Coco.Scanner(Stream);
+			this.Source = source;
+			//new MemoryStream( System.Text.Encoding.UTF8.GetBytes( source ) );
+
+			this.Scanner = new Coco.Scanner(this.Source);
 			this.Parser  = new Coco.Parser(this.Scanner);
-			this.Parser.Program = new Program( );
 		}
 		
 
 		public void Compile() 
 		{
-			System.Console.WriteLine ("Parsing file {0}", this.Filename);
+			System.Console.WriteLine ("Parsing source");
 			this.Parser.Parse();
 			Console.WriteLine();
 			if (this.Parser.errors.count > 0)
@@ -55,6 +44,9 @@ namespace openABAP.Compiler
 				throw new CompilerError( this.Parser.errors.count.ToString() + " errors dectected");
 			}
 			Console.WriteLine("------------------------------------"); 
+			this.CilFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".cil" );
+			this.ExeFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".exe" );
+
 			CilFile cil = new CilFile( this.CilFileInfo.FullName );
 			this.Parser.Program.WriteCil( cil );
 			cil.Close();
@@ -68,10 +60,10 @@ namespace openABAP.Compiler
 				System.Console.WriteLine( "ilasm - compiling CIL file...");
 				System.Diagnostics.Process proc = new System.Diagnostics.Process();
 				proc.EnableRaisingEvents=false; 
-//				proc.StartInfo.FileName = "ilasm";
-//				proc.StartInfo.Arguments = CilFileInfo.FullName;
-				proc.StartInfo.FileName = "cmd";
-				proc.StartInfo.Arguments = "/C ilasm.bat " + CilFileInfo.FullName;
+				proc.StartInfo.FileName = "ilasm";
+				proc.StartInfo.Arguments = CilFileInfo.FullName;
+//				proc.StartInfo.FileName = "cmd";
+//s				proc.StartInfo.Arguments = "/C ilasm.bat " + CilFileInfo.FullName;
 				proc.StartInfo.UseShellExecute = false;
 				proc.StartInfo.RedirectStandardOutput = true;
 				proc.Start();
@@ -81,8 +73,9 @@ namespace openABAP.Compiler
 			}
 		}
 		
-		public void Exceute( )
+		public String Exceute( )
 		{
+			string result = "";
 			if (ExeFileInfo != null)
 			{
 				Console.WriteLine("------------------------------------");				
@@ -96,12 +89,13 @@ namespace openABAP.Compiler
 				proc.StartInfo.RedirectStandardOutput = true;
 				proc.Start();
 				proc.WaitForExit();
-				string data = proc.StandardOutput.ReadToEnd();
-				Console.WriteLine( data );					
+				result = proc.StandardOutput.ReadToEnd();
+				Console.WriteLine( result );					
 				Console.WriteLine("------------------------------------");				
 				Console.WriteLine("ready");				
-				Console.WriteLine("------------------------------------");				
+				Console.WriteLine("------------------------------------");	
 			}
+			return result;
 		}
 		
 	}

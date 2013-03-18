@@ -149,7 +149,7 @@ PRODUCTIONS
 /*------------------------------------------------------------------------*/
 
 openABAP                                     
-=  PROGRAM ident (. Program.Name = t.val; .) DOT
+=  PROGRAM ident (. Program = new Program(t.val); .) DOT
   { class_command }
 .
 

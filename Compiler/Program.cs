@@ -7,6 +7,11 @@ namespace openABAP.Compiler
 	{
 		private Dictionary<string, Class> ClassList = new Dictionary<string, Class>();
 		public  string Name;
+
+		public Program(string n)
+		{
+			this.Name = n;
+		}
 		
 		public Class GetClass(string name) 
 		{

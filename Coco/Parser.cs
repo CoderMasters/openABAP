@@ -183,7 +183,7 @@ public Program Program = null;
 	void openABAP() {
 		Expect(10);
 		Expect(3);
-		Program.Name = t.val; 
+		Program = new Program(t.val); 
 		Expect(5);
 		while (la.kind == 11) {
 			class_command();
