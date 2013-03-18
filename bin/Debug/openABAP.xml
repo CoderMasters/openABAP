@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>/home/torsten/Dokumente/GitHub/openABAP/bin/Debug/openABAP</name>
+    </assembly>
+    <members>
+        <member name="T:openABAP.Compiler.Visibility">
+            <summary>
+            enumeration of possible visibility of methods and data for class definition.
+            public, protected, private
+            </summary>
+        </member>
+        <member name="T:openABAP.Compiler.Class">
+            <summary>
+            the abap class command is used to store data declarations and method declarations.
+            </summary>
+            <exception cref="T:openABAP.Compiler.CompilerError">
+            Is thrown when the compiler error.
+            </exception>
+        </member>
+        <member name="M:openABAP.Compiler.Class.AddMethod(openABAP.Compiler.Method)">
+            <summary>
+            add a method-defintion to the class.
+            </summary>
+            <param name="method">
+            Method.
+            </param>
+            <exception cref="T:openABAP.Compiler.CompilerError">
+            Is thrown when the method already exists in the class.
+            </exception>
+        </member>
+        <member name="M:openABAP.Compiler.Class.GetMethod(System.String)">
+            <summary>
+            get method defintion by method name.
+            </summary>
+            <returns>
+            The method.
+            </returns>
+            <param name="name">
+            Name.
+            </param>
+            <exception cref="T:openABAP.Compiler.CompilerError">
+            Is thrown when no method with this name is declared for the class.
+            </exception>
+        </member>
+        <member name="M:openABAP.Compiler.Class.AddAttribute(openABAP.Compiler.Data)">
+            <summary>
+            Adds the attribute, which means a data declaration.
+            </summary>
+            <param name="data">
+            Data.
+            </param>
+            <exception cref="T:openABAP.Compiler.CompilerError">
+            Is thrown when an attribute with same name is already defined.
+            </exception>
+        </member>
+        <member name="M:openABAP.Compiler.Class.GetAttribute(System.String)">
+            <summary>
+            Get an attribute (a data) by name.
+            </summary>
+            <returns>
+            The attribute.
+            </returns>
+            <param name="name">
+            Name.
+            </param>
+            <exception cref="T:openABAP.Compiler.CompilerError">
+            Is thrown when no attribute with given name is defined in class.
+            </exception>
+        </member>
+        <member name="M:openABAP.Compiler.Class.WriteCil(openABAP.Compiler.CilFile)">
+            <summary>
+            writes the class to cil file completely, including fields and methods.
+            </summary>
+            <param name="cil">
+            Stream.
+            </param>
+        </member>
+        <member name="T:openABAP.Compiler.ClassList">
+            <summary>
+            list of classes sorted by name. quick access to a class by binary tree search algorithm.
+            </summary>
+        </member>
+        <member name="T:openABAP.Compiler.Command">
+            <summary>
+            Command.
+            abstract basis class of all abap-commands
+            </summary>
+        </member>
+        <member name="M:openABAP.Compiler.Command.WriteCil(openABAP.Compiler.CilFile)">
+            <summary>
+            writes all necessary commands to an cil file for implementing the runtime.
+            </summary>
+            <param name="cil">
+            target cil file
+            </param>
+        </member>
+        <member name="T:openABAP.Compiler.CommandList">
+            <summary>
+            container for commands used in methods to store all commands.
+            </summary>
+        </member>
+        <member name="T:openABAP.Compiler.Compiler">
+            <summary>
+            central class of openABAP implementing following feauture:
+            scanning and parsing the abap source file.
+            creating an internal representation of the program using <see cref="T:openABAP.Compiler.Command" /> class.
+            building the CIL file
+            assembling the CIL file to EXE-assembly file.
+            calling EXE-file
+            </summary>
+        </member>
+    </members>
+</doc>

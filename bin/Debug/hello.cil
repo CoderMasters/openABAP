@@ -1,0 +1,81 @@
+.assembly extern Runtime{}
+.assembly extern mscorlib { .ver 4:0:0:0 } 
+.assembly 'hello' {}
+.module hello.exe
+.namespace hello
+{
+.class private auto ansi beforefieldinit TestClass extends [mscorlib]System.Object
+{
+.field public class [Runtime]openABAP.Runtime.CharValue text
+.field public class [Runtime]openABAP.Runtime.DecValue zahl
+.method private static hidebysig default void Main (string[] args)  cil managed
+{
+.entrypoint
+	.locals init (class hello.TestClass V_0)
+newobj instance void class hello.TestClass::'.ctor'()
+stloc.0
+ldloc.0
+callvirt instance void class hello.TestClass::Run()
+ret 
+} // end of method Main
+.method private static specialname rtspecialname default void '.cctor' ()  cil managed
+{
+ret
+} // end of method .cctor
+.method public hidebysig specialname rtspecialname instance default void '.ctor' ()  cil managed 
+{
+ldarg.0
+ldc.i4.s 30
+ldstr ""
+newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
+stfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
+ldarg.0
+ldc.r8 0.
+newobj instance void class [Runtime]openABAP.Runtime.DecValue::'.ctor'(float64)
+stfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
+ldarg.0 
+call instance void object::'.ctor'()
+ret 
+} // end of method .ctor
+.method public hidebysig instance default void Run()  cil managed 
+{
+ldstr "Hello Bielefeld !"
+call void class [mscorlib]System.Console::Write(string)
+call void class [mscorlib]System.Console::WriteLine()
+ldstr "Dieses ABAP-Programm lÃ¤uft in der der .NET runtime (bzw. Mono)."
+call void class [mscorlib]System.Console::Write(string)
+ldarg.0
+ldfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
+ldc.i4.s 2
+newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
+ldstr "*"
+ldc.i4.s 10
+newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
+ldstr "+"
+ldc.i4.s 11
+newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
+callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)
+callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)
+callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)
+call void class [mscorlib]System.Console::WriteLine()
+ldstr "Die Antwort auf die Frage des Sinn des Lebens, des Seins und Alles ist: "
+call void class [mscorlib]System.Console::Write(string)
+ldarg.0
+ldfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
+callvirt instance string class [Runtime]openABAP.Runtime.DecValue::OutputString()
+call void class [mscorlib]System.Console::Write(string)
+ldarg.0
+ldfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
+ldc.i4.s 26
+ldstr "abcdefghijklmnopqrstuvwxyz"
+newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
+callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)
+call void class [mscorlib]System.Console::WriteLine()
+ldarg.0
+ldfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
+callvirt instance string class [Runtime]openABAP.Runtime.CharValue::OutputString()
+call void class [mscorlib]System.Console::Write(string)
+ret 
+} // end of method Run
+} // end of class
+}
