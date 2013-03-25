@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -9,6 +10,10 @@ namespace openABAP.Compiler
 		}
 
 		public void WriteCil( CilFile cil )
+		{
+		}
+
+		public void BuildAssembly( ILGenerator il )
 		{
 		}
 	}

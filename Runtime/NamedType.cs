@@ -31,6 +31,10 @@ namespace openABAP.Runtime
 		{
 			return this.RefType.getRuntimeClassname();
 		}
+		public System.Type getRuntimeType ()
+		{
+			return this.RefType.getRuntimeType();
+		}
 		
 		public int getLength()
 		{

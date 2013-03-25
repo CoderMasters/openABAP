@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -7,6 +8,8 @@ namespace openABAP.Compiler
 		
 		void PushFormattedString( CilFile cil );
 		void PushValue( CilFile cil );
+		void PushFormattedString( ILGenerator il );
+		void PushValue( ILGenerator il );
 	}
 	
 }

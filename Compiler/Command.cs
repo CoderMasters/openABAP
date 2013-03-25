@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -17,7 +18,9 @@ namespace openABAP.Compiler
 /// target cil file
 /// </param>
 		void WriteCil( CilFile cil );
+		void BuildAssembly(ILGenerator il);
 	}
+
 	
 /// <summary>
 /// container for commands used in methods to store all commands.

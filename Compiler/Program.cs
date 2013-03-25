@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -49,7 +51,29 @@ namespace openABAP.Compiler
 			
 			cil.WriteLine("}");
 		}
-						
+
+		public System.Type BuildAssembly ()
+		{
+			AssemblyName aName = new AssemblyName(this.Name);
+	        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly( aName, AssemblyBuilderAccess.RunAndSave);
+
+	        // For a single-module assembly, the module name is usually
+	        // the assembly name plus an extension.
+	        ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
+
+			System.Type t = null;
+
+			foreach (KeyValuePair<string, Class> pair in this.ClassList) {
+				t = pair.Value.BuildAssembly( mb );
+			}
+
+			ab.Save(aName.Name + ".dll");
+			return t;
+		}
+
+		public void BuildAssembly (ILGenerator il)
+		{
+		}
 	}
 }
 

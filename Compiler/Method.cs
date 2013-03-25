@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -59,7 +61,33 @@ namespace openABAP.Compiler
 			//end of method
 			cil.WriteLine("ret ");
 			cil.WriteLine("} // end of method " + this.Name );
-		}		
+		}
+
+		public void BuildAssembly(TypeBuilder tb)
+		{
+			MethodAttributes attr = 0;
+			switch (this.Visibilty)
+			{
+				case Visibility.publ: attr = MethodAttributes.Public;  break;
+				case Visibility.prot: attr = MethodAttributes.Family;  break;
+				case Visibility.priv: attr = MethodAttributes.Private; break;
+			}
+			if (this.StaticMember) {
+				attr = attr  | MethodAttributes.Static;
+			}
+
+			MethodBuilder mb = tb.DefineMethod(this.Name, attr);
+			ILGenerator ctorIL = mb.GetILGenerator();
+			foreach( Command cmd in this.Commands ) 
+			{
+				cmd.BuildAssembly(ctorIL);
+			}
+			ctorIL.Emit (OpCodes.Ret);
+		}
+
+		public void BuildAssembly (ILGenerator il)
+		{
+		}
 	}
 	
 	public class MethodList : SortedList<string, Method> 

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
+
 using openABAP;
 
 namespace openABAP.Compiler
@@ -34,8 +36,9 @@ namespace openABAP.Compiler
 		}
 		
 
-		public void Compile() 
+		public System.Type Compile() 
 		{
+
 			System.Console.WriteLine ("Parsing source");
 			this.Parser.Parse();
 			Console.WriteLine();
@@ -44,14 +47,17 @@ namespace openABAP.Compiler
 				throw new CompilerError( this.Parser.errors.count.ToString() + " errors dectected");
 			}
 			Console.WriteLine("------------------------------------"); 
-			this.CilFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".cil" );
-			this.ExeFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".exe" );
 
-			CilFile cil = new CilFile( this.CilFileInfo.FullName );
-			this.Parser.Program.WriteCil( cil );
-			cil.Close();
-			Console.WriteLine("------------------------------------");
-			this.Ilasm( );
+			return this.Parser.Program.BuildAssembly();
+
+//			this.CilFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".cil" );
+//			this.ExeFileInfo    = new System.IO.FileInfo( this.Parser.Program.Name + ".exe" );
+//
+//			CilFile cil = new CilFile( this.CilFileInfo.FullName );
+//			this.Parser.Program.WriteCil( cil );
+//			cil.Close();
+//			Console.WriteLine("------------------------------------");
+//			this.Ilasm( );
 		}		
 
 		public void Ilasm ( )
@@ -97,7 +103,7 @@ namespace openABAP.Compiler
 			}
 			return result;
 		}
-		
+
 	}
 }
 

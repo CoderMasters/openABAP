@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using Bend.Util;
 
@@ -39,9 +40,13 @@ namespace openABAP.Http
 			//compile
             p.writeSuccess();
 			openABAP.Compiler.Compiler compiler = new openABAP.Compiler.Compiler(inputData.BaseStream);
-			compiler.Compile();
-			string result = compiler.Exceute();
-			p.outputStream.WriteLine(result);
+//			compiler.Compile();
+//			string result = compiler.Exceute();
+//			p.outputStream.WriteLine(result);
+			System.Type t = compiler.Compile();
+			MethodInfo mi = t.GetMethod("Run");
+			object o = Activator.CreateInstance(t);
+			mi.Invoke(o, null);
 		}
 
 		private void WriteForm (HttpProcessor p)

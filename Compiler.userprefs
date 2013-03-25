@@ -1,16 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Http/Server.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/Class.cs">
     <Files>
-      <File FileName="Compiler/Compiler.cs" Line="90" Column="1" />
-      <File FileName="Http/Server.cs" Line="53" Column="11" />
-      <File FileName="Http/client.js" Line="25" Column="40" />
+      <File FileName="Compiler/Compiler.cs" Line="106" Column="40" />
+      <File FileName="Compiler/Class.cs" Line="197" Column="2" />
+      <File FileName="Compiler/Data.cs" Line="55" Column="51" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/home/torsten/Dokumente/GitHub/openABAP/Http/Server.cs" line="49" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

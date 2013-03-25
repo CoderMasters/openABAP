@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -171,7 +173,63 @@ namespace openABAP.Compiler
 			
 			cil.WriteLine("} // end of class");	
 		}
-		
+
+		public void BuildAssembly (ILGenerator il)
+		{
+		}
+
+		public System.Type BuildAssembly ( ModuleBuilder mb )
+		{
+	        TypeBuilder tb = mb.DefineType( this.Name, TypeAttributes.Public );
+	        Type[] parameterTypes = { };
+			ConstructorBuilder ctor1 = null;
+			ILGenerator ctorIL = null;
+
+			//attributes
+			foreach (KeyValuePair<string, Data> pair in this.Attributes) {
+				pair.Value.BuildAssembly( tb );
+			}	
+
+			// define class constructor
+//	        ctor1 = tb.DefineConstructor(
+//	            MethodAttributes.Public | MethodAttributes.Static, 
+//	            CallingConventions.Standard, 
+//	            parameterTypes);
+//        	ctorIL = ctor1.GetILGenerator();
+//			// init static attributes of the class
+//			foreach (KeyValuePair<string, Data> pair in this.Attributes) {
+//				if ( pair.Value.StaticMember ) {
+//					pair.Value.BuildAssembly( ctorIL );
+//				}
+//			}
+
+	        // define constructor 
+	        ctor1 = tb.DefineConstructor(
+	            MethodAttributes.Public, 
+	            CallingConventions.Standard, 
+	            parameterTypes);
+         	ctorIL = ctor1.GetILGenerator();
+
+			// call constructor of System.Object
+			ctorIL.Emit(OpCodes.Ldarg_0);
+        	ctorIL.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
+        
+			// init attributes of the class
+			foreach (KeyValuePair<string, Data> pair in this.Attributes) {
+				if ( ! pair.Value.StaticMember ) {
+					pair.Value.BuildAssembly( ctorIL );
+				}
+			}
+			ctorIL.Emit(OpCodes.Ret);
+
+			//methods
+			foreach (KeyValuePair<string, Method> pair in this.Methods) {
+				pair.Value.BuildAssembly(tb);				
+			}	
+
+			return tb.CreateType();
+		}
+
 	}
 	
 	/// <summary>

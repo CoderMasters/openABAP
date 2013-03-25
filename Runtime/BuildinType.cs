@@ -43,7 +43,19 @@ namespace openABAP.Runtime
 				default:             return ""; //error
 			}
 		}
-		
+
+		public System.Type getRuntimeType()
+		{
+			switch (this.Type) {
+				case InternalType.c: return typeof(CharValue);
+				case InternalType.n: return null;
+				case InternalType.d: return null;
+				case InternalType.t: return null;
+				case InternalType.i: return typeof(IntValue);
+				case InternalType.p: return typeof(DecValue);
+				default:             return null; //error
+			}
+		}
 		public int getLength() {
 			return this.Length;
 		}

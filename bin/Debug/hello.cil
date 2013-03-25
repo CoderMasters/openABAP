@@ -1,81 +1,67 @@
-.assembly extern Runtime{}
-.assembly extern mscorlib { .ver 4:0:0:0 } 
-.assembly 'hello' {}
-.module hello.exe
-.namespace hello
+.assembly extern mscorlib
 {
-.class private auto ansi beforefieldinit TestClass extends [mscorlib]System.Object
-{
-.field public class [Runtime]openABAP.Runtime.CharValue text
-.field public class [Runtime]openABAP.Runtime.DecValue zahl
-.method private static hidebysig default void Main (string[] args)  cil managed
-{
-.entrypoint
-	.locals init (class hello.TestClass V_0)
-newobj instance void class hello.TestClass::'.ctor'()
-stloc.0
-ldloc.0
-callvirt instance void class hello.TestClass::Run()
-ret 
-} // end of method Main
-.method private static specialname rtspecialname default void '.cctor' ()  cil managed
-{
-ret
-} // end of method .cctor
-.method public hidebysig specialname rtspecialname instance default void '.ctor' ()  cil managed 
-{
-ldarg.0
-ldc.i4.s 30
-ldstr ""
-newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
-stfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
-ldarg.0
-ldc.r8 0.
-newobj instance void class [Runtime]openABAP.Runtime.DecValue::'.ctor'(float64)
-stfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
-ldarg.0 
-call instance void object::'.ctor'()
-ret 
-} // end of method .ctor
-.method public hidebysig instance default void Run()  cil managed 
-{
-ldstr "Hello Bielefeld !"
-call void class [mscorlib]System.Console::Write(string)
-call void class [mscorlib]System.Console::WriteLine()
-ldstr "Dieses ABAP-Programm lÃ¤uft in der der .NET runtime (bzw. Mono)."
-call void class [mscorlib]System.Console::Write(string)
-ldarg.0
-ldfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
-ldc.i4.s 2
-newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
-ldstr "*"
-ldc.i4.s 10
-newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
-ldstr "+"
-ldc.i4.s 11
-newobj instance void class [Runtime]openABAP.Runtime.IntValue::'.ctor'(int32)
-callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)
-callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)
-callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)
-call void class [mscorlib]System.Console::WriteLine()
-ldstr "Die Antwort auf die Frage des Sinn des Lebens, des Seins und Alles ist: "
-call void class [mscorlib]System.Console::Write(string)
-ldarg.0
-ldfld class [Runtime]openABAP.Runtime.DecValue hello.TestClass::zahl
-callvirt instance string class [Runtime]openABAP.Runtime.DecValue::OutputString()
-call void class [mscorlib]System.Console::Write(string)
-ldarg.0
-ldfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
-ldc.i4.s 26
-ldstr "abcdefghijklmnopqrstuvwxyz"
-newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
-callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)
-call void class [mscorlib]System.Console::WriteLine()
-ldarg.0
-ldfld class [Runtime]openABAP.Runtime.CharValue hello.TestClass::text
-callvirt instance string class [Runtime]openABAP.Runtime.CharValue::OutputString()
-call void class [mscorlib]System.Console::Write(string)
-ret 
-} // end of method Run
-} // end of class
+  .ver 4:0:0:0
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
 }
+.assembly extern Runtime
+{
+  .ver 0:0:0:0
+}
+.assembly 'hello'
+{
+  .hash algorithm 0x00008004
+  .ver  0:0:0:0
+}
+.module hello // GUID = {93194138-0B06-4DF8-9ABE-24B7347E3152}
+
+
+  .class public auto ansi TestClass
+  	extends [mscorlib]System.Object
+  {
+    .field  public  class [Runtime]openABAP.Runtime.CharValue text
+
+    // method line 1
+    .method public specialname rtspecialname 
+           instance default void '.ctor' ()  cil managed 
+    {
+        // Method begins at RVA 0x20ec
+	// Code size 28 (0x1c)
+	.maxstack 8
+	IL_0000:  ldarg.0 
+	IL_0001:  call instance void object::'.ctor'()
+	IL_0006:  ldc.i4.s 0x1e
+	IL_0008:  nop 
+	IL_0009:  nop 
+	IL_000a:  nop 
+	IL_000b:  ldstr ""
+	IL_0010:  newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
+	IL_0015:  ldarg.0 
+	IL_0016:  stfld class [Runtime]openABAP.Runtime.CharValue TestClass::text
+	IL_001b:  ret 
+    } // end of method TestClass::.ctor
+
+    // method line 2
+    .method public 
+           instance default void Run ()  cil managed 
+    {
+        // Method begins at RVA 0x210c
+	// Code size 43 (0x2b)
+	.maxstack 6
+	IL_0000:  ldarg.0 
+	IL_0001:  ldfld class [Runtime]openABAP.Runtime.CharValue TestClass::text
+	IL_0006:  ldc.i4.s 0x10
+	IL_0008:  nop 
+	IL_0009:  nop 
+	IL_000a:  nop 
+	IL_000b:  ldstr "Hello Bielefeld!"
+	IL_0010:  newobj instance void class [Runtime]openABAP.Runtime.CharValue::'.ctor'(int32, string)
+	IL_0015:  callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)
+	IL_001a:  ldarg.0 
+	IL_001b:  ldfld class [Runtime]openABAP.Runtime.CharValue TestClass::text
+	IL_0020:  callvirt instance string class [Runtime]openABAP.Runtime.CharValue::OutputString()
+	IL_0025:  call void class [mscorlib]System.Console::Write(string)
+	IL_002a:  ret 
+    } // end of method TestClass::Run
+
+  } // end of class TestClass
+

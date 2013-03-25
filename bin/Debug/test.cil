@@ -1,7 +1,0 @@
-.assembly extern Runtime{}
-.assembly extern mscorlib { .ver 4:0:0:0 } 
-.assembly 'test' {}
-.module test.exe
-.namespace test
-{
-}

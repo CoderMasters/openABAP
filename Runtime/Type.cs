@@ -9,6 +9,7 @@ namespace openABAP.Runtime
 	{
 		InternalType getInternalType();
 		string getRuntimeClassname();
+		System.Type getRuntimeType();
 		int getLength();
 	}
 	

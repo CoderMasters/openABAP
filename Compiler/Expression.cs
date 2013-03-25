@@ -1,10 +1,13 @@
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
 	public interface IfExpression
 	{
 		void PushValue( CilFile cil );
+		void PushValue( ILGenerator il );
 	}
 	
 	public class BinaryExpression : IfExpression
@@ -25,6 +28,16 @@ namespace openABAP.Compiler
 			cil.WriteLine("ldstr \"{0}\"", this.Operator);
 			this.RightChild.PushValue(cil); 
 			cil.WriteLine("callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)");
+		}
+
+		public void PushValue (ILGenerator il)
+		{
+			System.Type[] types = { typeof(string), typeof(openABAP.Runtime.IfValue) };
+			MethodInfo mi = typeof(openABAP.Runtime.IfValue).GetMethod("Calculate", types);
+			this.LeftChild.PushValue(il); 
+			il.Emit(OpCodes.Ldstr, this.Operator);
+			this.RightChild.PushValue(il);
+			il.EmitCall(OpCodes.Callvirt, mi, null);
 		}
 
 	}
@@ -48,6 +61,14 @@ namespace openABAP.Compiler
 			cil.WriteLine("callvirt instance class [Runtime]openABAP.Runtime.IfValue class [Runtime]openABAP.Runtime.IntValue::Calculate(string, class [Runtime]openABAP.Runtime.IfValue)");
 		}
 
+		public void PushValue( ILGenerator il )
+		{
+			System.Type[] types = { typeof(string), typeof(openABAP.Runtime.IfValue) };
+			MethodInfo mi = typeof(openABAP.Runtime.IfValue).GetMethod("Calculate", types);
+			il.Emit (OpCodes.Ldstr, this.Operator);
+			il.Emit (OpCodes.Ldnull);
+			il.EmitCall (OpCodes.Callvirt, mi, null);
+		}
 	}
 	
 	public class ExpressionLeaf : IfExpression
@@ -62,6 +83,11 @@ namespace openABAP.Compiler
 		public void PushValue( CilFile cil )
 		{
 			Value.PushValue(cil);
+		}
+
+		public void PushValue( ILGenerator il )
+		{
+			Value.PushValue(il);
 		}
 	}
 }

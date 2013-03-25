@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
@@ -29,7 +31,16 @@ namespace openABAP.Compiler
 			this.Source.PushValue( cil );
 			cil.WriteLine("callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)");
 		}
-		
+
+		public void BuildAssembly (ILGenerator il)
+		{
+			System.Type[] types = {typeof(openABAP.Runtime.IfValue)};
+			MethodInfo mi = typeof(openABAP.Runtime.IfValue).GetMethod("Set", types);
+			this.Target.PushValue( il );
+			this.Source.PushValue( il );
+			il.EmitCall(OpCodes.Callvirt, mi, null);
+		}
+
 	}
 }
 
