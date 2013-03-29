@@ -1,10 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/Class.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/Program.cs">
     <Files>
-      <File FileName="Compiler/Compiler.cs" Line="106" Column="40" />
-      <File FileName="Compiler/Class.cs" Line="197" Column="2" />
-      <File FileName="Compiler/Data.cs" Line="55" Column="51" />
+      <File FileName="Compiler/Compiler.cs" Line="51" Column="1" />
+      <File FileName="Http/Server.cs" Line="49" Column="1" />
+      <File FileName="Http/SimpleHttpServer.cs" Line="65" Column="1" />
+      <File FileName="Compiler/Program.cs" Line="64" Column="25" />
+      <File FileName="Compiler/Class.cs" Line="230" Column="1" />
+      <File FileName="bin/Debug/hello.cil" Line="51" Column="42" />
+      <File FileName="Compiler/Data.cs" Line="105" Column="50" />
+      <File FileName="Compiler/Write.cs" Line="32" Column="46" />
+      <File FileName="Compiler/Move.cs" Line="40" Column="32" />
+      <File FileName="Runtime/CharValue.cs" Line="28" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

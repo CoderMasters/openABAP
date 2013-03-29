@@ -6,30 +6,15 @@ namespace openABAP.Compiler
 {
 	public class Write : Command
 	{
-		private Value Value; 
-		private string Format;
-			
-		public Write (Value val)
+		public Value Value; 
+		public string Format;
+
+		public Write(openABAP.Coco.Token t) 
+			: base(t) 
 		{
-			this.Value = val;
-			this.Format = "";
 		}
 
-		public Write (Value val, string format)
-		{
-			this.Value = val;
-			this.Format = format;
-		}
-		
-		public void WriteCil( CilFile cil ) {
-			if (Format == "/") {
-				cil.WriteLine("call void class [mscorlib]System.Console::WriteLine()");			
-			}
-			this.Value.PushFormattedString( cil );  //push formatted string of output value to stack
-			cil.WriteLine("call void class [mscorlib]System.Console::Write(string)");			
-		}
-
-		public void BuildAssembly( ILGenerator il )
+		public override void BuildAssembly( ILGenerator il )
 		{
 			if (Format == "/") {
 				il.EmitWriteLine("");

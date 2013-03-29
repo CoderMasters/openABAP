@@ -12,6 +12,16 @@ namespace openABAP.Http
             : base(port) {
         }
 
+		public static void Main (string[] args)
+		{
+			int port = 8080;
+			Console.WriteLine("Starting http server on port {0}", port);
+            Server httpServer = new Server(port);
+            Thread thread = new Thread(new ThreadStart(httpServer.listen));
+            thread.Start();
+			Console.WriteLine("listening on http://localhost:8080");
+		}
+
         public override void handleGETRequest (HttpProcessor p)
 		{
 			Console.WriteLine ("request: {0}", p.http_url);
@@ -37,16 +47,19 @@ namespace openABAP.Http
 
         public override void handlePOSTRequest(HttpProcessor p, StreamReader inputData) {
             Console.WriteLine("POST request: {0}", p.http_url);
-			//compile
-            p.writeSuccess();
-			openABAP.Compiler.Compiler compiler = new openABAP.Compiler.Compiler(inputData.BaseStream);
-//			compiler.Compile();
-//			string result = compiler.Exceute();
-//			p.outputStream.WriteLine(result);
+			// write source in post body to server file
+			StreamWriter file = new StreamWriter("temp.abap");
+			inputData.BaseStream.CopyTo(file.BaseStream);
+			file.Close();
+			// compile
+			openABAP.Compiler.Compiler compiler = new openABAP.Compiler.Compiler("temp.abap");
 			System.Type t = compiler.Compile();
+			// execute
 			MethodInfo mi = t.GetMethod("Run");
 			object o = Activator.CreateInstance(t);
 			mi.Invoke(o, null);
+			// ready
+			p.writeSuccess();
 		}
 
 		private void WriteForm (HttpProcessor p)

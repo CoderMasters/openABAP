@@ -269,18 +269,20 @@ packedtype <out Runtime.BuildinType aType>   (. aType = null; .)
 
 /*------------------------------------------------------------------------*/
 write_command
-= WRITE
-  (  ":" write_parameter { "," write_parameter } 
-  |      write_parameter
+= WRITE                                      (. Write cmd = new Write(t); .)
+  (  ":" write_parameter<cmd> 
+     { ","                                   (. cmd = new Write(t); .)
+        write_parameter<cmd> } 
+  |  write_parameter<cmd>
   ) DOT 
 .
 
-write_parameter                                    (. Compiler.Value aValue; string aFormat=""; .)
-= [format<out aFormat>] value<out aValue>  (. AddCommand( new Write(aValue, aFormat) ); .)
+write_parameter<Write cmd>                              
+= [format<cmd>] value<out cmd.Value>    	 (. cmd.EndLine = t.line; cmd.End(t); AddCommand( cmd ); .)
 .
 
-format<out string format>
-= "/"                                (. format = t.val; .)
+format<Write cmd>
+= "/"                                (. cmd.Format = t.val; .)
 .
 
 value <out Compiler.Value value>     (. value = null; .)
@@ -317,17 +319,18 @@ struct_field
 
 
 /*------------------------------------------------------------------------*/
-move_command                              (. Compiler.Value aValue; Move move = new Move(); AddCommand( move ); .)
-= MOVE value <out aValue>   (. move.setSource( aValue ); .)           
-    to variable <out aValue>  (. move.setTarget( (Data)aValue ); .)
-  DOT
+move_command                              (. Compiler.Value aValue;   .)
+= MOVE                                    (. Move cmd = new Move(t); .)
+    value <out aValue>                    (. cmd.setSource( aValue ); .)           
+    to variable <out aValue>              (. cmd.setTarget( (Data)aValue );  .)
+  DOT                                     (. cmd.End(t); AddCommand( cmd ); .)
 .
 
 /*------------------------------------------------------------------------*/
-compute_command                       (. Value target; Compute cmd = new Compute(); .)
-= variable <out target>       (. cmd.Target = (Data)target; .)
-  "=" expression <out cmd.Expression>  
-  DOT                                 (. AddCommand( cmd ); .)
+compute_command                           (. Value target; .)
+= variable <out target>                   (. Compute cmd = new Compute(t); cmd.Target = (Data)target; .)
+  "=" expression <out cmd.Expression>
+  DOT                                     (. cmd.End(t); AddCommand( cmd ); .)
 .
 
 expression <out Compiler.IfExpression e> (. e=null; string op; IfExpression e2; .)

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics.SymbolStore;
+using System.Diagnostics;
 
 namespace openABAP.Compiler
 {
-	public class Program : Command
+	public class Program
 	{
 		private Dictionary<string, Class> ClassList = new Dictionary<string, Class>();
 		public  string Name;
@@ -34,46 +36,19 @@ namespace openABAP.Compiler
 				throw new CompilerError("class " + aClass.Name + " already defined");
 			}
 		}
-		
-		
-		public void WriteCil( CilFile cil ) 
-		{
-			cil.Namespace = this.Name;
-			
-			cil.WriteLine(".assembly '" + this.Name + "' {}" );
-			cil.WriteLine(".module " + this.Name + ".exe");
-			cil.WriteLine(".namespace " + this.Name);
-			cil.WriteLine("{" );
-			
-			foreach (KeyValuePair<string, Class> pair in this.ClassList) {
-				pair.Value.WriteCil( cil );
-			}
-			
-			cil.WriteLine("}");
-		}
 
-		public System.Type BuildAssembly ()
+		public System.Type BuildAssembly (ModuleBuilder mb, ISymbolDocumentWriter doc)
 		{
-			AssemblyName aName = new AssemblyName(this.Name);
-	        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly( aName, AssemblyBuilderAccess.RunAndSave);
-
-	        // For a single-module assembly, the module name is usually
-	        // the assembly name plus an extension.
-	        ModuleBuilder mb = ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
 
 			System.Type t = null;
 
 			foreach (KeyValuePair<string, Class> pair in this.ClassList) {
-				t = pair.Value.BuildAssembly( mb );
+				t = pair.Value.BuildAssembly( mb, doc );
 			}
 
-			ab.Save(aName.Name + ".dll");
 			return t;
 		}
 
-		public void BuildAssembly (ILGenerator il)
-		{
-		}
 	}
 }
 

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Diagnostics.SymbolStore;
+using System.Diagnostics;
 
 namespace openABAP.Compiler
 {
-	public class Method : Command
+	public class Method
 	{
 		public string Name;
 		public Visibility Visibilty; 
@@ -37,33 +39,8 @@ namespace openABAP.Compiler
 		{
 			this.Commands.Add(cmd);	
 		}
-		
-		public void WriteCil( CilFile cil )
-		{
-			string modifier = "public";
-			switch (this.Visibilty)
-			{
-				case Visibility.publ: modifier = "public";    break;
-				case Visibility.prot: modifier = "protected"; break;
-				case Visibility.priv: modifier = "private";   break;
-			}
-			if (this.StaticMember) {
-				modifier = modifier + " static";
-			}
-			
-			cil.WriteLine(".method " + modifier + " hidebysig instance default void " + this.Name + "()  cil managed ");
-			cil.WriteLine("{");
-			// write all commands to CIL 
-			foreach( Command cmd in this.Commands ) 
-			{
-				cmd.WriteCil(cil);
-			}
-			//end of method
-			cil.WriteLine("ret ");
-			cil.WriteLine("} // end of method " + this.Name );
-		}
 
-		public void BuildAssembly(TypeBuilder tb)
+		public void BuildAssembly(TypeBuilder tb, ISymbolDocumentWriter doc)
 		{
 			MethodAttributes attr = 0;
 			switch (this.Visibilty)
@@ -77,12 +54,13 @@ namespace openABAP.Compiler
 			}
 
 			MethodBuilder mb = tb.DefineMethod(this.Name, attr);
-			ILGenerator ctorIL = mb.GetILGenerator();
+			ILGenerator il = mb.GetILGenerator();
 			foreach( Command cmd in this.Commands ) 
 			{
-				cmd.BuildAssembly(ctorIL);
+				il.MarkSequencePoint(doc, cmd.StartLine, cmd.StartCol, cmd.EndLine, cmd.EndCol);
+				cmd.BuildAssembly(il);
 			}
-			ctorIL.Emit (OpCodes.Ret);
+			il.Emit (OpCodes.Ret);
 		}
 
 		public void BuildAssembly (ILGenerator il)

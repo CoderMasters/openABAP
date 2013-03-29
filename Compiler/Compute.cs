@@ -8,18 +8,16 @@ namespace openABAP.Compiler
 	{
 		public IfExpression Expression = null;
 		public Data Target = null;
-		
-		public void WriteCil( CilFile cil )
+
+		public Compute (openABAP.Coco.Token t)
+			: base(t)
 		{
-			this.Target.PushValue( cil );
-			this.Expression.PushValue( cil );
-			cil.WriteLine("callvirt instance void class [Runtime]openABAP.Runtime.IfValue::Set(class [Runtime]openABAP.Runtime.IfValue)");
 		}
 
-		public void BuildAssembly( ILGenerator il )
+		public override void BuildAssembly( ILGenerator il )
 		{
 			System.Type[] types = {typeof(openABAP.Runtime.IfValue)};
-			MethodInfo mi = typeof(openABAP.Runtime.IfValue).GetMethod("Set", types);
+			MethodInfo mi = this.Target.getType().getRuntimeType().GetMethod("Set", types);
 			this.Target.PushValue( il );
 			this.Expression.PushValue( il );
 			il.EmitCall (OpCodes.Callvirt, mi, null);

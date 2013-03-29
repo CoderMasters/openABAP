@@ -337,38 +337,42 @@ public Program Program = null;
 
 	void write_command() {
 		Expect(23);
+		Write cmd = new Write(t); 
 		if (la.kind == 38) {
 			Get();
-			write_parameter();
+			write_parameter(cmd);
 			while (la.kind == 39) {
 				Get();
-				write_parameter();
+				cmd = new Write(t); 
+				write_parameter(cmd);
 			}
 		} else if (StartOf(3)) {
-			write_parameter();
+			write_parameter(cmd);
 		} else SynErr(49);
 		Expect(5);
 	}
 
 	void move_command() {
-		Compiler.Value aValue; Move move = new Move(); AddCommand( move ); 
+		Compiler.Value aValue;   
 		Expect(30);
+		Move cmd = new Move(t); 
 		value(out aValue);
-		move.setSource( aValue ); 
+		cmd.setSource( aValue ); 
 		Expect(31);
 		variable(out aValue);
-		move.setTarget( (Data)aValue ); 
+		cmd.setTarget( (Data)aValue );  
 		Expect(5);
+		cmd.End(t); AddCommand( cmd ); 
 	}
 
 	void compute_command() {
-		Value target; Compute cmd = new Compute(); 
+		Value target; 
 		variable(out target);
-		cmd.Target = (Data)target; 
+		Compute cmd = new Compute(t); cmd.Target = (Data)target; 
 		Expect(44);
 		expression(out cmd.Expression);
 		Expect(5);
-		AddCommand( cmd ); 
+		cmd.End(t); AddCommand( cmd ); 
 	}
 
 	void data_type(Compiler.Data cmd) {
@@ -442,18 +446,17 @@ public Program Program = null;
 		}
 	}
 
-	void write_parameter() {
-		Compiler.Value aValue; string aFormat=""; 
+	void write_parameter(Write cmd) {
 		if (la.kind == 9) {
-			format(out aFormat);
+			format(cmd);
 		}
-		value(out aValue);
-		AddCommand( new Write(aValue, aFormat) ); 
+		value(out cmd.Value);
+		cmd.EndLine = t.line; cmd.End(t); AddCommand( cmd ); 
 	}
 
-	void format(out string format) {
+	void format(Write cmd) {
 		Expect(9);
-		format = t.val; 
+		cmd.Format = t.val; 
 	}
 
 	void value(out Compiler.Value value) {

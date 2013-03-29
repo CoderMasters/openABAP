@@ -4,12 +4,6 @@
         <name>/home/torsten/Dokumente/GitHub/openABAP/bin/Debug/openABAP</name>
     </assembly>
     <members>
-        <member name="T:openABAP.Compiler.Visibility">
-            <summary>
-            enumeration of possible visibility of methods and data for class definition.
-            public, protected, private
-            </summary>
-        </member>
         <member name="T:openABAP.Compiler.Class">
             <summary>
             the abap class command is used to store data declarations and method declarations.
@@ -68,14 +62,6 @@
             Is thrown when no attribute with given name is defined in class.
             </exception>
         </member>
-        <member name="M:openABAP.Compiler.Class.WriteCil(openABAP.Compiler.CilFile)">
-            <summary>
-            writes the class to cil file completely, including fields and methods.
-            </summary>
-            <param name="cil">
-            Stream.
-            </param>
-        </member>
         <member name="T:openABAP.Compiler.ClassList">
             <summary>
             list of classes sorted by name. quick access to a class by binary tree search algorithm.
@@ -86,14 +72,6 @@
             Command.
             abstract basis class of all abap-commands
             </summary>
-        </member>
-        <member name="M:openABAP.Compiler.Command.WriteCil(openABAP.Compiler.CilFile)">
-            <summary>
-            writes all necessary commands to an cil file for implementing the runtime.
-            </summary>
-            <param name="cil">
-            target cil file
-            </param>
         </member>
         <member name="T:openABAP.Compiler.CommandList">
             <summary>

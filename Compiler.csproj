@@ -42,7 +42,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Compiler\Main.cs" />
     <Compile Include="Compiler\CompilerError.cs" />
     <Compile Include="Coco\Parser.cs" />
     <Compile Include="Coco\Scanner.cs" />
@@ -57,7 +56,6 @@
     <Compile Include="Compiler\Literal.cs" />
     <Compile Include="Compiler\Value.cs" />
     <Compile Include="Compiler\Compiler.cs" />
-    <Compile Include="Compiler\CilFile.cs" />
     <Compile Include="Compiler\Expression.cs" />
     <Compile Include="Compiler\Compute.cs" />
     <Compile Include="Compiler\Variable.cs" />
