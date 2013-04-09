@@ -53,13 +53,17 @@ namespace openABAP.Http
 			file.Close();
 			// compile
 			openABAP.Compiler.Compiler compiler = new openABAP.Compiler.Compiler("temp.abap");
-			System.Type t = compiler.Compile();
-			// execute
-			MethodInfo mi = t.GetMethod("Run");
-			object o = Activator.CreateInstance(t);
-			mi.Invoke(o, null);
+			try {
+				openABAP.Compiler.Program prg = compiler.Compile();
+				prg.Run ();
+				p.outputStream.WriteLine(openABAP.Runtime.Runtime.Output);
+			} catch (openABAP.Compiler.CompilerError ex) {
+				p.outputStream.WriteLine(ex.Message);
+				p.outputStream.WriteLine(compiler.GetErrors());
+			}
+
 			// ready
-			p.writeSuccess();
+			//p.writeSuccess();
 		}
 
 		private void WriteForm (HttpProcessor p)
@@ -79,8 +83,6 @@ namespace openABAP.Http
 			p.outputStream.WriteLine ("</head>");
 			p.outputStream.WriteLine ("<body>");
 			p.outputStream.WriteLine ("<h1>openABAP</h1>");
-			p.outputStream.WriteLine ("Current Time: " + DateTime.Now.ToString ());
-			p.outputStream.WriteLine ("url : {0}", p.http_url);
 			p.outputStream.WriteLine ("<form name=screen method=get action=\"\">");
 			p.outputStream.WriteLine ("<textarea name=source cols=120 rows=30>");
 			p.outputStream.WriteLine (source);

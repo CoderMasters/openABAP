@@ -2,7 +2,7 @@ using System;
 
 namespace openABAP.Runtime
 {
-	public class BuildinType : Type
+	public class BuildinType : TypeDescr
 	{
 		private InternalType Type;
 		private int Length;

@@ -26,6 +26,7 @@ namespace openABAP.Compiler
 		private Coco.Scanner Scanner = null;
 		private Coco.Parser  Parser  = null; 
 		private string       TempFilename = "";
+		private StringWriter Errors = new StringWriter();
 
 		public System.IO.FileInfo SourceFileInfo = null; 
 
@@ -36,19 +37,20 @@ namespace openABAP.Compiler
 			this.TempFilename = filename;
 			this.Scanner = new Coco.Scanner(filename);
 			this.Parser  = new Coco.Parser(this.Scanner);
+			this.Parser.errors.errorStream = this.Errors;
 		}
 		
 
-		public System.Type Compile ()
+		public Program Compile ()
 		{
 
-			System.Console.WriteLine ("Parsing source");
+			System.Console.Write ("Parsing source...");
 			this.Parser.Parse ();
 			Console.WriteLine ();
 			if (this.Parser.errors.count > 0) {
 				throw new CompilerError (this.Parser.errors.count.ToString () + " errors dectected");
 			}
-			Console.WriteLine ("------------------------------------"); 
+			System.Console.WriteLine ("ready");
 
 			// rename temporary filename into abap filename
 			string sourceFilename = this.Parser.Program.Name + ".abap";
@@ -57,39 +59,23 @@ namespace openABAP.Compiler
 			}
 			File.Move(this.TempFilename, sourceFilename);
 
-			return this.BuildAssembly();
+			System.Console.Write ("Creating Assembly...");
+			Program result = this.BuildAssembly();
+			System.Console.WriteLine ("ready");
+			return result;
 		}
 
-		private System.Type BuildAssembly ()
+		private Program BuildAssembly ()
 		{
-			string name = this.Parser.Program.Name;
-			AssemblyName aName = new AssemblyName(name);
-	        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly( aName, AssemblyBuilderAccess.RunAndSave);
-
-			// mark generated code as debuggable
-        	System.Type daType = typeof(DebuggableAttribute);
-        	ConstructorInfo daCtor = daType.GetConstructor(new System.Type[] { typeof(DebuggableAttribute.DebuggingModes) });
-        	CustomAttributeBuilder daBuilder = new CustomAttributeBuilder(daCtor, new object[] { 
-            	DebuggableAttribute.DebuggingModes.DisableOptimizations | 
-            	DebuggableAttribute.DebuggingModes.Default });
-        	ab.SetCustomAttribute(daBuilder);
-
-	        // For a single-module assembly, the module name is usually
-	        // the assembly name plus an extension.
-	        ModuleBuilder mb = ab.DefineDynamicModule(name, name + ".dll", true);
-
-			// Tell Emit about the source file that we want to associate this with. 
-			FileInfo info = new FileInfo(name + ".abap");
-        	ISymbolDocumentWriter doc = mb.DefineDocument(info.FullName, Guid.Empty, Guid.Empty, Guid.Empty);
-
-			System.Type t = this.Parser.Program.BuildAssembly(mb, doc);
-
-			ab.Save(name + ".dll");
-
-			return t;
-
+			this.Parser.Program.BuildAssembly();
+			return this.Parser.Program;
 		}
-		
+
+		public string GetErrors()
+		{
+			return this.Errors.ToString();
+		}
+
 //		public String Exceute( )
 //		{
 //			string result = "";

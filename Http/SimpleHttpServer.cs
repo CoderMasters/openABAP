@@ -63,7 +63,7 @@ namespace Bend.Util {
                 }
             } catch (Exception e) {
                 Console.WriteLine("Exception: " + e.ToString());
-                writeFailure();
+                writeSuccess();
             }
             outputStream.Flush();
             // bs.Flush(); // flush any remaining output

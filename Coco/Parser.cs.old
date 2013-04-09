@@ -68,7 +68,7 @@ public Program Program = null;
 		{
 			CurrentClass.AddMethod( m );
 		} else {
-			throw new CompilerError("method definition " + m.Name + " outside a class");
+			SemErr("method definition " + m.Name + " outside a class");
 		}
 	}
 
@@ -78,7 +78,7 @@ public Program Program = null;
 		{
 			CurrentMethod.AddCommand( cmd );
 		} else {
-			throw new CompilerError("command outside a method");
+			SemErr("command outside a method");
 		}
 	}
 
@@ -89,7 +89,7 @@ public Program Program = null;
 			try {
 				CurrentMethod.AddLocalData( data );	
 			} catch (ArgumentException) {
-				throw new CompilerError("data" + data.Name + " already defined in method" ); 
+				SemErr("data" + data.Name + " already defined in method" ); 
 			}
 		} 
 		else if (CurrentClass != null)
@@ -98,7 +98,7 @@ public Program Program = null;
 		}
 		else {
 			//fehler
-			throw new CompilerError("missplaced data declaration");
+			SemErr("missplaced data declaration");
 		}				
 	}
 	
@@ -114,7 +114,7 @@ public Program Program = null;
 			result = CurrentClass.GetAttribute(name);
 		}
 		if (result == null) {
-			throw new CompilerError("unknown variable " + name);
+			SemErr("unknown variable " + name);
 		}
 		return result;
 	}
@@ -343,7 +343,7 @@ public Program Program = null;
 			write_parameter(cmd);
 			while (la.kind == 39) {
 				Get();
-				Write cmd = new Write(t); 
+				cmd = new Write(t); 
 				write_parameter(cmd);
 			}
 		} else if (StartOf(3)) {

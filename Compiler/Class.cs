@@ -19,6 +19,7 @@ namespace openABAP.Compiler
 		
 		public DataList   Attributes = new DataList();
 		public MethodList Methods    = new MethodList();  
+		public System.Type CreatedClass = null;
 
 		public Class (string name)
 		{
@@ -158,8 +159,8 @@ namespace openABAP.Compiler
 			foreach (KeyValuePair<string, Method> pair in this.Methods) {
 				pair.Value.BuildAssembly(tb, doc);				
 			}	
-
-			return tb.CreateType();
+			this.CreatedClass = tb.CreateType();
+			return this.CreatedClass;
 		}
 
 	}

@@ -5,18 +5,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler", "Compiler.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runtime", "Runtime\Runtime.csproj", "{D3977A6D-9C94-44F7-B8E0-DB68778C44EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "debugTest", "debugTest\debugTest.csproj", "{77BA1BE6-1AEC-4F5F-877A-51DD4B4E3080}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{77BA1BE6-1AEC-4F5F-877A-51DD4B4E3080}.Debug|x86.ActiveCfg = Debug|x86
-		{77BA1BE6-1AEC-4F5F-877A-51DD4B4E3080}.Debug|x86.Build.0 = Debug|x86
-		{77BA1BE6-1AEC-4F5F-877A-51DD4B4E3080}.Release|x86.ActiveCfg = Release|x86
-		{77BA1BE6-1AEC-4F5F-877A-51DD4B4E3080}.Release|x86.Build.0 = Release|x86
 		{ADB5F23D-910E-4825-93DF-21B021B068F2}.Debug|x86.ActiveCfg = Debug|x86
 		{ADB5F23D-910E-4825-93DF-21B021B068F2}.Debug|x86.Build.0 = Debug|x86
 		{ADB5F23D-910E-4825-93DF-21B021B068F2}.Release|x86.ActiveCfg = Release|x86

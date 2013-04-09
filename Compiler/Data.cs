@@ -13,7 +13,7 @@ namespace openABAP.Compiler
 		public Boolean StaticMember;
 		public FieldBuilder FieldBuilder = null;
 		
-		private Runtime.Type Type = null;
+		private Runtime.TypeDescr Type = null;
 		
 		public Data (string name = "" , Class c = null, Visibility v = Visibility.publ, Boolean staticMember = false )
 		{
@@ -23,11 +23,11 @@ namespace openABAP.Compiler
 			this.StaticMember = staticMember;
 		}
 		
-		public void setType(Runtime.Type aType)
+		public void setType(Runtime.TypeDescr aType)
 		{
 			this.Type = aType;
 		}
-		public Runtime.Type getType( )
+		public Runtime.TypeDescr getType( )
 		{
 			return this.Type;
 		}

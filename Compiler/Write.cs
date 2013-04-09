@@ -6,8 +6,8 @@ namespace openABAP.Compiler
 {
 	public class Write : Command
 	{
-		public Value Value; 
-		public string Format;
+		public Value Value   = null; 
+		public string Format = null;
 
 		public Write(openABAP.Coco.Token t) 
 			: base(t) 
@@ -16,15 +16,15 @@ namespace openABAP.Compiler
 
 		public override void BuildAssembly( ILGenerator il )
 		{
-			if (Format == "/") {
-				il.EmitWriteLine("");
+			System.Type[] types = { typeof(String) };
+			if (Format != null && Format.Equals("/")) {
+				il.Emit(OpCodes.Ldstr, "\n");
+				il.EmitCall(OpCodes.Call, typeof(openABAP.Runtime.Runtime).GetMethod("Write", types), null);
 			}
-			this.Value.PushFormattedString( il );  //push formatted string of output value to stack
-			System.Type[] types = new System.Type[1];
-			types[0] = typeof(String);
-			il.EmitCall(OpCodes.Call, typeof(System.Console).GetMethod("Write", types), null);		
+			//push formatted string of output value to stack
+			this.Value.PushFormattedString(il);
+			il.EmitCall(OpCodes.Call, typeof(openABAP.Runtime.Runtime).GetMethod("Write", types), null);		
 		}
-
 	}
 }
 

@@ -2,18 +2,18 @@ using System;
 
 namespace openABAP.Runtime
 {
-	public class NamedType : Type
+	public class NamedType : TypeDescr
 	{
 		private string Name;
-		private Type RefType;
+		private TypeDescr RefType;
 		
-		public NamedType (string name, Type aType=null)
+		public NamedType (string name, TypeDescr aType=null)
 		{
 			this.Name = name;
 			this.RefType = aType;
 		}
 		
-		public void setRefType( Type aType)
+		public void setRefType( TypeDescr aType)
 		{
 			this.RefType = aType;
 		}

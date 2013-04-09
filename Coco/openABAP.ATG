@@ -17,7 +17,7 @@ COMPILER openABAP
 		{
 			CurrentClass.AddMethod( m );
 		} else {
-			throw new CompilerError("method definition " + m.Name + " outside a class");
+			SemErr("method definition " + m.Name + " outside a class");
 		}
 	}
 
@@ -27,7 +27,7 @@ COMPILER openABAP
 		{
 			CurrentMethod.AddCommand( cmd );
 		} else {
-			throw new CompilerError("command outside a method");
+			SemErr("command outside a method");
 		}
 	}
 
@@ -38,7 +38,7 @@ COMPILER openABAP
 			try {
 				CurrentMethod.AddLocalData( data );	
 			} catch (ArgumentException) {
-				throw new CompilerError("data" + data.Name + " already defined in method" ); 
+				SemErr("data" + data.Name + " already defined in method" ); 
 			}
 		} 
 		else if (CurrentClass != null)
@@ -47,7 +47,7 @@ COMPILER openABAP
 		}
 		else {
 			//fehler
-			throw new CompilerError("missplaced data declaration");
+			SemErr("missplaced data declaration");
 		}				
 	}
 	
@@ -63,7 +63,7 @@ COMPILER openABAP
 			result = CurrentClass.GetAttribute(name);
 		}
 		if (result == null) {
-			throw new CompilerError("unknown variable " + name);
+			SemErr("unknown variable " + name);
 		}
 		return result;
 	}
