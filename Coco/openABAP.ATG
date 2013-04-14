@@ -21,7 +21,7 @@ COMPILER openABAP
 		}
 	}
 
-	public void AddCommand( Command cmd )
+	public void AddCommand( ExecutableCommand cmd )
 	{
 		if (CurrentMethod != null) 
 		{
@@ -155,14 +155,14 @@ openABAP
 
 /*------------------------------------------------------------------------*/
 class_command
-=  CLASS 
+=  CLASS 					   
   ident                       
-  ( class_definition<t.val> | 
-    class_implementation<t.val> )
+  ( class_definition<t.val.ToUpper()> | 
+    class_implementation<t.val.ToUpper()> )
 .
 
 class_definition<string name>
-= DEFINITION DOT               (. CurrentClass = new Class( name ); Program.AddClass( CurrentClass ); .)
+= DEFINITION DOT               (. CurrentClass = new Class(t); CurrentClass.Name = name; Program.AddClass( CurrentClass ); .)
   [ public_section ] 
   [ protected_section ] 
   [ private_section ] 
@@ -194,13 +194,15 @@ section
 .
 
 methods_command
-= METHODS ident                (. CurrentMethod = new Method(name:t.val, v:CurrentVisibility ); .)
-  DOT                          (. AddMethod( CurrentMethod ); CurrentMethod = null; .)
+= METHODS						(. CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:false ); .)
+	ident						(. CurrentMethod.Name = t.val; .)
+  DOT							(. AddMethod( CurrentMethod ); CurrentMethod = null; .)
 .
 
 class_methods_command
-= CLASS_METHODS ident          (. CurrentMethod = new Method(name:t.val, v:CurrentVisibility, staticMember:true ); .)
-  DOT                          (. AddMethod( CurrentMethod ); CurrentMethod = null; .)
+= CLASS_METHODS					(. CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:true ); .)
+    ident						(. CurrentMethod.Name = t.val; .)
+  DOT							(. AddMethod( CurrentMethod ); CurrentMethod = null; .)
 .
   
 method_command

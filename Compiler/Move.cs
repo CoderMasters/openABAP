@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
-	public class Move : Command
+	public class Move : ExecutableCommand
 	{
 		public Value    Source;
 		public Data     Target;

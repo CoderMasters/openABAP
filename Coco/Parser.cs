@@ -72,7 +72,7 @@ public Program Program = null;
 		}
 	}
 
-	public void AddCommand( Command cmd )
+	public void AddCommand( ExecutableCommand cmd )
 	{
 		if (CurrentMethod != null) 
 		{
@@ -194,16 +194,16 @@ public Program Program = null;
 		Expect(11);
 		Expect(3);
 		if (la.kind == 12) {
-			class_definition(t.val);
+			class_definition(t.val.ToUpper());
 		} else if (la.kind == 13) {
-			class_implementation(t.val);
+			class_implementation(t.val.ToUpper());
 		} else SynErr(46);
 	}
 
 	void class_definition(string name) {
 		Expect(12);
 		Expect(5);
-		CurrentClass = new Class( name ); Program.AddClass( CurrentClass ); 
+		CurrentClass = new Class(t); CurrentClass.Name = name; Program.AddClass( CurrentClass ); 
 		if (la.kind == 15) {
 			public_section();
 		}
@@ -287,16 +287,18 @@ public Program Program = null;
 
 	void methods_command() {
 		Expect(19);
+		CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:false ); 
 		Expect(3);
-		CurrentMethod = new Method(name:t.val, v:CurrentVisibility ); 
+		CurrentMethod.Name = t.val; 
 		Expect(5);
 		AddMethod( CurrentMethod ); CurrentMethod = null; 
 	}
 
 	void class_methods_command() {
 		Expect(20);
+		CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:true ); 
 		Expect(3);
-		CurrentMethod = new Method(name:t.val, v:CurrentVisibility, staticMember:true ); 
+		CurrentMethod.Name = t.val; 
 		Expect(5);
 		AddMethod( CurrentMethod ); CurrentMethod = null; 
 	}

@@ -28,14 +28,22 @@ namespace openABAP.Compiler
 			this.EndCol  = t.col;
 		}
 
-		abstract public void BuildAssembly(ILGenerator il);
 	}
 
+	public abstract class ExecutableCommand : Command
+	{
+		abstract public void BuildAssembly(ILGenerator il);
+
+		public ExecutableCommand (Coco.Token t)
+			: base(t)
+		{
+		}
+	}
 	
 /// <summary>
 /// container for commands used in methods to store all commands.
 /// </summary>
-	public class CommandList : List<Command> 
+	public class CommandList : List<ExecutableCommand> 
 	{
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>openABAP</name>
+        <name>/home/torsten/Dokumente/GitHub/openABAP/bin/Debug/openABAP</name>
     </assembly>
     <members>
         <member name="T:openABAP.Compiler.Class">
@@ -82,10 +82,10 @@
             <summary>
             central class of openABAP implementing following feauture:
             scanning and parsing the abap source file.
-            creating an internal representation of the program using <see cref="T:openABAP.Compiler.Command"/> class.
-            building the CIL file 
+            creating an internal representation of the program using <see cref="T:openABAP.Compiler.Command" /> class.
+            building the CIL file
             assembling the CIL file to EXE-assembly file.
-            calling EXE-file 
+            calling EXE-file
             </summary>
         </member>
     </members>

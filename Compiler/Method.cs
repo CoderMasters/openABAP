@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace openABAP.Compiler
 {
-	public class Method
+	public class Method : Command
 	{
 		public string Name;
 		public Visibility Visibilty; 
@@ -16,9 +16,10 @@ namespace openABAP.Compiler
 		private DataList LocalData = new DataList();
 		private CommandList Commands = new CommandList();
 				
-		public Method (string name, Visibility v = Visibility.publ, Boolean staticMember = false )
+		public Method (Coco.Token t, Visibility v = Visibility.publ, Boolean staticMember = false )
+			:base(t)
 		{
-			this.Name = name;
+
 			this.Visibilty = v;
 			this.StaticMember = staticMember;
 		}
@@ -35,7 +36,7 @@ namespace openABAP.Compiler
 			return result;
 		}
 		
-		public void AddCommand( Command cmd )
+		public void AddCommand( ExecutableCommand cmd )
 		{
 			this.Commands.Add(cmd);	
 		}
@@ -55,7 +56,7 @@ namespace openABAP.Compiler
 
 			MethodBuilder mb = tb.DefineMethod(this.Name, attr);
 			ILGenerator il = mb.GetILGenerator();
-			foreach( Command cmd in this.Commands ) 
+			foreach( ExecutableCommand cmd in this.Commands ) 
 			{
 				il.MarkSequencePoint(doc, cmd.StartLine, cmd.StartCol, cmd.EndLine, cmd.EndCol);
 				cmd.BuildAssembly(il);
@@ -63,9 +64,6 @@ namespace openABAP.Compiler
 			il.Emit (OpCodes.Ret);
 		}
 
-		public void BuildAssembly (ILGenerator il)
-		{
-		}
 	}
 	
 	public class MethodList : SortedList<string, Method> 

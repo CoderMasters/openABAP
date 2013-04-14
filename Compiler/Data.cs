@@ -13,7 +13,7 @@ namespace openABAP.Compiler
 		public Boolean StaticMember;
 		public FieldBuilder FieldBuilder = null;
 		
-		private Runtime.TypeDescr Type = null;
+		private Runtime.TypeDescr Type = new Runtime.BuildinType();
 		
 		public Data (string name = "" , Class c = null, Visibility v = Visibility.publ, Boolean staticMember = false )
 		{

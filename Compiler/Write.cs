@@ -4,7 +4,7 @@ using openABAP;
 
 namespace openABAP.Compiler
 {
-	public class Write : Command
+	public class Write : ExecutableCommand
 	{
 		public Value Value   = null; 
 		public string Format = null;

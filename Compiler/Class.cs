@@ -13,19 +13,19 @@ namespace openABAP.Compiler
 	/// <exception cref='CompilerError'>
 	/// Is thrown when the compiler error.
 	/// </exception>
-	public class Class
+	public class Class : Command
 	{
-		public string Name;
+		public string Name = "";
 		
 		public DataList   Attributes = new DataList();
 		public MethodList Methods    = new MethodList();  
 		public System.Type CreatedClass = null;
 
-		public Class (string name)
+		public Class (Coco.Token t) 
+			:base(t)
 		{
-			this.Name = name;
 		}
-		
+
 		/// <summary>
 		/// add a method-defintion to the class.
 		/// </summary>
@@ -104,10 +104,6 @@ namespace openABAP.Compiler
 				throw new CompilerError("no definition of attribute " + name + " in class " + this.Name );
 			}
 			return result;
-		}
-
-		public void BuildAssembly (ILGenerator il)
-		{
 		}
 
 		public System.Type BuildAssembly ( ModuleBuilder mb, ISymbolDocumentWriter doc )

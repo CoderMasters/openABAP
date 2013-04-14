@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
-	public class Compute : Command
+	public class Compute : ExecutableCommand
 	{
 		public IfExpression Expression = null;
 		public Data Target = null;
