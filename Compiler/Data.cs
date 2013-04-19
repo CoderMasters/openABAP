@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
-	public class Data : Value
+	public class Data : Command, IfValue
 	{
 		public string Name;
 		public Class  MemberOf;
@@ -13,11 +13,12 @@ namespace openABAP.Compiler
 		public Boolean StaticMember;
 		public FieldBuilder FieldBuilder = null;
 		
-		private Runtime.TypeDescr Type = new Runtime.BuildinType();
+		private Runtime.TypeDescr Type = new Runtime.BuildinType(); //Default is C LENGTH 1
 		
-		public Data (string name = "" , Class c = null, Visibility v = Visibility.publ, Boolean staticMember = false )
+		public Data (Coco.Token t, Class c = null, Visibility v = Visibility.publ, Boolean staticMember = false )
+			: base( t )
 		{
-			this.Name = name;
+			this.Name =t.val;
 			this.MemberOf = c;
 			this.Visibility = v;
 			this.StaticMember = staticMember;

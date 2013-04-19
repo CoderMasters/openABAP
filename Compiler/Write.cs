@@ -6,7 +6,7 @@ namespace openABAP.Compiler
 {
 	public class Write : ExecutableCommand
 	{
-		public Value Value   = null; 
+		public IfValue Value   = null; 
 		public string Format = null;
 
 		public Write(openABAP.Coco.Token t) 

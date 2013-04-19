@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
-	public class Variable : Value
+	public class IfVariable : IfValue
 	{
 
 		public void PushFormattedString( ILGenerator il )

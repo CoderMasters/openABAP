@@ -59,15 +59,10 @@ namespace openABAP.Compiler
 			}
 			File.Move(this.TempFilename, sourceFilename);
 
+			// emit assembly by System.Reflection.Emit classes
 			System.Console.Write ("Creating Assembly...");
-			Program result = this.BuildAssembly();
-			System.Console.WriteLine ("ready");
-			return result;
-		}
-
-		private Program BuildAssembly ()
-		{
 			this.Parser.Program.BuildAssembly();
+			System.Console.WriteLine ("ready");
 			return this.Parser.Program;
 		}
 

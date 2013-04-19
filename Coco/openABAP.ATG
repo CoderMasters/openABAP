@@ -222,16 +222,23 @@ command
 
 /*------------------------------------------------------------------------*/
 data_command 
-= DATA ident                (. Compiler.Data cmd = new Compiler.Data(name:t.val, c:CurrentClass, v:CurrentVisibility); .) 
-  [ data_type<cmd> ]
-  DOT                                     (. AddData( cmd ); .)   
+= DATA ( data_parameter<false>
+       | ":" data_parameter<false> ["," data_parameter<false>]
+       )
+  DOT   
 .
 
 class_data_command 
-= CLASS_DATA ident          (. Compiler.Data cmd = new Compiler.Data(name:t.val, c:CurrentClass, v:CurrentVisibility, staticMember:true); .) 
-  [ data_type<cmd> ]
-  DOT                                     (. AddData( cmd ); .)   
+= CLASS_DATA  ( data_parameter<true>
+       | ":" data_parameter<true> ["," data_parameter<true>]
+       )
+  DOT
 .
+
+data_parameter<bool isStatic>
+= ident                (. Compiler.Data cmd = new Compiler.Data(t, c:CurrentClass, v:CurrentVisibility, staticMember:isStatic); AddData( cmd ); .) 
+  [ data_type<cmd> ]   (. cmd.End(t); .)
+. 
 
 data_type<Compiler.Data cmd>              (. Runtime.BuildinType aType; .)
 = TYPE 
@@ -287,18 +294,18 @@ format<Write cmd>
 = "/"                                (. cmd.Format = t.val; .)
 .
 
-value <out Compiler.Value value>     (. value = null; .)
+value <out Compiler.IfValue value>     (. value = null; .)
 = ( literal<out value> 
   | variable<out value> 
   ).
   
-literal <out Compiler.Value value>   (. value = null; .)
+literal <out Compiler.IfValue value>   (. value = null; .)
 = ( string                           (. value = new Compiler.StringLiteral( t.val.Substring(1,t.val.Length-2) ); .)
   | number                           (. value = new Compiler.IntegerLiteral( Convert.ToInt32( t.val) ); .)
   )
 .
 
-variable <out Compiler.Value variable>   (. Scanner.ignore_space = false; .)
+variable <out Compiler.IfValue variable>   (. Scanner.ignore_space = false; .)
 = {SPACE} ident                          (. variable = GetVariable(t.val); .) 
   { ( instance_member | class_member ) } 
   { struct_field }  
@@ -321,7 +328,7 @@ struct_field
 
 
 /*------------------------------------------------------------------------*/
-move_command                              (. Compiler.Value aValue;   .)
+move_command                              (. Compiler.IfValue aValue;   .)
 = MOVE                                    (. Move cmd = new Move(t); .)
     value <out aValue>                    (. cmd.setSource( aValue ); .)           
     to variable <out aValue>              (. cmd.setTarget( (Data)aValue );  .)
@@ -329,7 +336,7 @@ move_command                              (. Compiler.Value aValue;   .)
 .
 
 /*------------------------------------------------------------------------*/
-compute_command                           (. Value target; .)
+compute_command                           (. IfValue target; .)
 = variable <out target>                   (. Compute cmd = new Compute(t); cmd.Target = (Data)target; .)
   "=" expression <out cmd.Expression>
   DOT                                     (. cmd.End(t); AddCommand( cmd ); .)
@@ -351,7 +358,7 @@ term <out Compiler.IfExpression e>       (. string op; IfExpression e2; e=null; 
   }
 .
 
-factor <out Compiler.IfExpression e>     (. Compiler.Value val; e=null; .)
+factor <out Compiler.IfExpression e>     (. Compiler.IfValue val; e=null; .)
 = (       value <out val>                (. e = new ExpressionLeaf( val ); .)
   | "(" expression <out  e>  ")" 
   )

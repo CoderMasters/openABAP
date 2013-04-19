@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace openABAP.Compiler
 {
-	public class StringLiteral : Value 
+	public class StringLiteral : IfValue 
 	{	
 		private string Text = "";
 		
@@ -34,7 +34,7 @@ namespace openABAP.Compiler
 		}
 	}
 
-	public class IntegerLiteral : Value 
+	public class IntegerLiteral : IfValue 
 	{
 		private int Value = 0;
 		

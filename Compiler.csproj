@@ -52,13 +52,13 @@
     <Compile Include="Compiler\Write.cs" />
     <Compile Include="Compiler\Types.cs" />
     <Compile Include="Compiler\Literal.cs" />
-    <Compile Include="Compiler\Value.cs" />
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="Compiler\Expression.cs" />
     <Compile Include="Compiler\Compute.cs" />
-    <Compile Include="Compiler\Variable.cs" />
     <Compile Include="Http\SimpleHttpServer.cs" />
     <Compile Include="Http\Server.cs" />
+    <Compile Include="Compiler\IfVariable.cs" />
+    <Compile Include="Compiler\IfValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ABAP\Test.abap" />

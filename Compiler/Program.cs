@@ -71,6 +71,10 @@ namespace openABAP.Compiler
 			ab.Save(name + ".dll");
 		}
 
+		/// <summary>
+		/// starts the generated program. 
+		/// this means scanning all generated classes for a method named "Run" and invoke it.
+		/// </summary>
 		public void Run()
 		{
 			// execute

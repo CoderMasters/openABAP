@@ -1,3 +1,17 @@
+2013-04-19  Torsten  <torsten.manhardt@gmx.de>
+
+	* Data.cs:
+	* Move.cs:
+	* Value.cs:
+	* Write.cs:
+	* Program.cs:
+	* Literal.cs:
+	* IfValue.cs:
+	* Variable.cs:
+	* Compiler.cs:
+	* Expression.cs:
+	* IfVariable.cs: 
+
 2013-04-10  Torsten  <torsten.manhardt@gmx.de>
 
 	* Data.cs:

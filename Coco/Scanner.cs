@@ -369,12 +369,12 @@ public class Scanner {
 			case "decimals": t.kind = 28; break;
 			case "move": t.kind = 30; break;
 			case "to": t.kind = 31; break;
-			case "i": t.kind = 32; break;
-			case "d": t.kind = 33; break;
-			case "t": t.kind = 34; break;
-			case "c": t.kind = 35; break;
-			case "n": t.kind = 36; break;
-			case "p": t.kind = 37; break;
+			case "i": t.kind = 34; break;
+			case "d": t.kind = 35; break;
+			case "t": t.kind = 36; break;
+			case "c": t.kind = 37; break;
+			case "n": t.kind = 38; break;
+			case "p": t.kind = 39; break;
 			default: break;
 		}
 	}
@@ -513,9 +513,9 @@ public class Scanner {
 				else if (ch == 'd') {AddCh(); goto case 17;}
 				else {goto case 0;}
 			case 34:
-				{t.kind = 38; break;}
+				{t.kind = 32; break;}
 			case 35:
-				{t.kind = 39; break;}
+				{t.kind = 33; break;}
 			case 36:
 				{t.kind = 40; break;}
 			case 37:

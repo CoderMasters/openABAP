@@ -56,9 +56,9 @@ namespace openABAP.Compiler
 	
 	public class ExpressionLeaf : IfExpression
 	{
-		Value Value;
+		IfValue Value;
 		
-		public ExpressionLeaf( Value v )
+		public ExpressionLeaf( IfValue v )
 		{
 			this.Value = v;
 		}

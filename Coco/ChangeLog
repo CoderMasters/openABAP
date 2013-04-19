@@ -1,3 +1,11 @@
+2013-04-19  Torsten  <torsten.manhardt@gmx.de>
+
+	* Parser.cs:
+	* Scanner.cs:
+	* openABAP.ATG:
+	* Parser.cs.old:
+	* Scanner.cs.old: 
+
 2013-04-10  Torsten  <torsten.manhardt@gmx.de>
 
 	* Parser.cs:

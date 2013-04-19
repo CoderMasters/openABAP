@@ -6,7 +6,7 @@ namespace openABAP.Compiler
 {
 	public class Move : ExecutableCommand
 	{
-		public Value    Source;
+		public IfValue    Source;
 		public Data     Target;
 		
 		public Move (openABAP.Coco.Token t) 
@@ -14,7 +14,7 @@ namespace openABAP.Compiler
 		{
 		}
 		
-		public void setSource(Value source)
+		public void setSource(IfValue source)
 		{
 			this.Source = source;
 		}
