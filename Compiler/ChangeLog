@@ -1,3 +1,18 @@
+2013-04-23  Torsten  <torsten.manhardt@gmx.de>
+
+	* Move.cs:
+	* Data.cs:
+	* Class.cs:
+	* Field.cs:
+	* Method.cs:
+	* IfValue.cs:
+	* Program.cs:
+	* Compute.cs:
+	* Literal.cs:
+	* Compiler.cs:
+	* IfVariable.cs:
+	* ClassBuilder.cs: 
+
 2013-04-19  Torsten  <torsten.manhardt@gmx.de>
 
 	* Data.cs:

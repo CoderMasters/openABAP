@@ -1,74 +1,19 @@
 using System.Collections;
 using System.Text;
 using System.Reflection;
+using System.Reflection.Emit;
 using openABAP.Compiler;
+using openABAP.Runtime;
 
 COMPILER openABAP
 
-/*------------------------------------------------------------------------*/
-	public Program Program = null;
-	private Class CurrentClass = null;
-	private Method CurrentMethod = null;
-	private Visibility CurrentVisibility = Visibility.publ;
+//------------------------------------------------------------------------
+// additional declarations for generated class Parser
+//------------------------------------------------------------------------
 
-	public void AddMethod( Method m )
-	{
-		if (CurrentClass != null) 
-		{
-			CurrentClass.AddMethod( m );
-		} else {
-			SemErr("method definition " + m.Name + " outside a class");
-		}
-	}
-
-	public void AddCommand( ExecutableCommand cmd )
-	{
-		if (CurrentMethod != null) 
-		{
-			CurrentMethod.AddCommand( cmd );
-		} else {
-			SemErr("command outside a method");
-		}
-	}
-
-	public void AddData( Data data )
-	{
-		if (CurrentMethod != null) 
-		{
-			try {
-				CurrentMethod.AddLocalData( data );	
-			} catch (ArgumentException) {
-				SemErr("data" + data.Name + " already defined in method" ); 
-			}
-		} 
-		else if (CurrentClass != null)
-		{
-			CurrentClass.AddAttribute( data );
-		}
-		else {
-			//fehler
-			SemErr("missplaced data declaration");
-		}				
-	}
+	public openABAP.Compiler.Compiler Context = null;
 	
-	public Data GetVariable(string name)
-	{
-		Data result = null;
-		if (CurrentMethod != null) 
-		{
-			result = CurrentMethod.GetLocalData(name);
-		}
-		if (result == null && CurrentClass != null) 
-		{
-			result = CurrentClass.GetAttribute(name);
-		}
-		if (result == null) {
-			SemErr("unknown variable " + name);
-		}
-		return result;
-	}
-
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 IGNORECASE
 
@@ -149,7 +94,7 @@ PRODUCTIONS
 /*------------------------------------------------------------------------*/
 
 openABAP                                     
-=  PROGRAM ident (. Program = new Program(t.val); .) DOT
+=  PROGRAM ident (. Context.DefineProgram(t.val); .) DOT
   { class_command }
 .
 
@@ -157,34 +102,34 @@ openABAP
 class_command
 =  CLASS 					   
   ident                       
-  ( class_definition<t.val.ToUpper()> | 
-    class_implementation<t.val.ToUpper()> )
+  ( class_definition<t.val> | 
+    class_implementation<t.val> )
 .
 
 class_definition<string name>
-= DEFINITION DOT               (. CurrentClass = new Class(t); CurrentClass.Name = name; Program.AddClass( CurrentClass ); .)
+= DEFINITION DOT               (. Context.DefineClass(name); .)
   [ public_section ] 
   [ protected_section ] 
   [ private_section ] 
-  ENDCLASS DOT                 (. CurrentClass = null; .)
+  ENDCLASS DOT
 .
 
 class_implementation<string name>
-= IMPLEMENTATION DOT           (. CurrentClass = Program.GetClass( name ); .)
+= IMPLEMENTATION DOT			(. Context.ImplementClass( name ); .)
   { method_command }
-  ENDCLASS DOT                 (. CurrentClass = null; .)
+  ENDCLASS DOT					(. Context.EndClass( ); .)
 .
 
 public_section
-= PUBLIC SECTION DOT           (. CurrentVisibility = Visibility.publ; .)
+= PUBLIC SECTION DOT           (. Context.CurrentVisibility = Visibility.publ; .)
   { section }
 .
 protected_section
-= PROTECTED SECTION DOT        (. CurrentVisibility = Visibility.prot; .)
+= PROTECTED SECTION DOT        (. Context.CurrentVisibility = Visibility.prot; .)
   { section }
 .
 private_section
-= PRIVATE SECTION DOT          (. CurrentVisibility = Visibility.prot; .)
+= PRIVATE SECTION DOT          (. Context.CurrentVisibility = Visibility.prot; .)
   { section }
 .
 
@@ -194,31 +139,16 @@ section
 .
 
 methods_command
-= METHODS						(. CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:false ); .)
-	ident						(. CurrentMethod.Name = t.val; .)
-  DOT							(. AddMethod( CurrentMethod ); CurrentMethod = null; .)
+= METHODS
+	ident						(. Context.DefineMethod(t, isStatic:false); .)
+  DOT
 .
 
 class_methods_command
-= CLASS_METHODS					(. CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:true ); .)
-    ident						(. CurrentMethod.Name = t.val; .)
-  DOT							(. AddMethod( CurrentMethod ); CurrentMethod = null; .)
-.
-  
-method_command
-= METHOD ident                 (. CurrentMethod = CurrentClass.GetMethod( t.val ); .) 
+= CLASS_METHODS
+    ident						(. Context.DefineMethod(t, isStatic:true); .)
   DOT
-  { command }
-  ENDMETHOD DOT                (. CurrentMethod =  null; .)
-.
-
-/*------------------------------------------------------------------------*/
-command
-= ( data_command
-  | write_command 
-  | move_command 
-  | compute_command )
-.
+.  
 
 /*------------------------------------------------------------------------*/
 data_command 
@@ -236,22 +166,38 @@ class_data_command
 .
 
 data_parameter<bool isStatic>
-= ident                (. Compiler.Data cmd = new Compiler.Data(t, c:CurrentClass, v:CurrentVisibility, staticMember:isStatic); AddData( cmd ); .) 
-  [ data_type<cmd> ]   (. cmd.End(t); .)
+= ident                		(. string name = t.val; TypeDescr type = new Runtime.BuildinType(); .) 
+  [ data_type<out type> ]   (. Context.DefineField(name, type, isStatic); .)
 . 
 
-data_type<Compiler.Data cmd>              (. Runtime.BuildinType aType; .)
-= TYPE 
-         ( ident                          (. cmd.setType( new Runtime.NamedType(t.val) ); .)
-         | buildintype<out aType>         (. cmd.setType( aType ); .)
+data_type<out TypeDescr type>
+= TYPE 									  (. type = null; BuildinType bt; .)
+         ( ident                          (. type = new Runtime.NamedType(t.val); .)
+         | buildintype<out bt>            (. type = bt; .)
          )  
 .
+/*------------------------------------------------------------------------*/
+method_command
+= METHOD ident                 (. Context.ImplementMethod( t ); .) 
+  DOT
+  { command_block }
+  ENDMETHOD DOT                (. Context.EndMethod( t ); .)
+.
 
-buildintype <out Runtime.BuildinType aType>  (. aType = null; .)
+command_block
+= ( data_command
+  | write_command 
+  | move_command 
+  | compute_command )
+.
+
+/*------------------------------------------------------------------------*/
+
+buildintype <out Runtime.BuildinType type>  (. type = null; .)
 = 
-  ( fixlentype <out aType> 
-  | varlentype <out aType> 
-  | packedtype <out aType>
+  ( fixlentype <out type> 
+  | varlentype <out type> 
+  | packedtype <out type>
   )
 .
 
@@ -266,7 +212,7 @@ varlentype <out Runtime.BuildinType aType>   (. aType = null; .)
   = ( "c"                                 (. aType = new Runtime.BuildinType( Runtime.InternalType.c ); .)
     | "n"                                 (. aType = new Runtime.BuildinType( Runtime.InternalType.n ); .)
     ) 
-  [LENGTH number              (. aType.setLength( Convert.ToInt32(t.val) ); .)  ]
+  [LENGTH number              (. aType.setLength ( Convert.ToInt32(t.val) ); .)  ]
 .
 
 packedtype <out Runtime.BuildinType aType>   (. aType = null; .)   
@@ -287,16 +233,16 @@ write_command
 .
 
 write_parameter<Write cmd>                              
-= [format<cmd>] value<out cmd.Value>    	 (. cmd.EndLine = t.line; cmd.End(t); AddCommand( cmd ); .)
+= [format<cmd>] value<out cmd.Value>    	 (. cmd.End(t); Context.EmitCommand( cmd ); .)
 .
 
 format<Write cmd>
 = "/"                                (. cmd.Format = t.val; .)
 .
 
-value <out Compiler.IfValue value>     (. value = null; .)
+value <out Compiler.IfValue value>     (. value = null; IfVariable var=null; .)
 = ( literal<out value> 
-  | variable<out value> 
+  | variable<out var>                  (. value = var; .)
   ).
   
 literal <out Compiler.IfValue value>   (. value = null; .)
@@ -305,10 +251,13 @@ literal <out Compiler.IfValue value>   (. value = null; .)
   )
 .
 
-variable <out Compiler.IfValue variable>   (. Scanner.ignore_space = false; .)
-= {SPACE} ident                          (. variable = GetVariable(t.val); .) 
-  { ( instance_member | class_member ) } 
-  { struct_field }  
+variable <out Compiler.IfVariable variable>   (. Scanner.ignore_space = false; .)
+= {SPACE} ident                          (. variable = Context.GetVariable( t.val ); .) 
+  { ( instance_member 
+    | class_member 
+    | struct_field 
+    ) 
+  } 
   [ "+" number ]
   [ "(" number ")" ]   
   {SPACE}                                (. Scanner.ignore_space = true; .)
@@ -326,20 +275,19 @@ struct_field
 = "-" ident
 .
 
-
 /*------------------------------------------------------------------------*/
 move_command                              (. Compiler.IfValue aValue;   .)
 = MOVE                                    (. Move cmd = new Move(t); .)
-    value <out aValue>                    (. cmd.setSource( aValue ); .)           
-    to variable <out aValue>              (. cmd.setTarget( (Data)aValue );  .)
-  DOT                                     (. cmd.End(t); AddCommand( cmd ); .)
+    value <out cmd.Source>           
+    to variable <out cmd.Target>
+  DOT                                     (. Context.EmitCommand( cmd); .)
 .
 
 /*------------------------------------------------------------------------*/
-compute_command                           (. IfValue target; .)
-= variable <out target>                   (. Compute cmd = new Compute(t); cmd.Target = (Data)target; .)
+compute_command                           (. openABAP.Compiler.IfVariable target; .)
+= variable <out target>                   (. Compute cmd = new Compute(t); cmd.Target = target; .)
   "=" expression <out cmd.Expression>
-  DOT                                     (. cmd.End(t); AddCommand( cmd ); .)
+  DOT                                     (. cmd.End(t); Context.EmitCommand( cmd ); .)
 .
 
 expression <out Compiler.IfExpression e> (. e=null; string op; IfExpression e2; .)

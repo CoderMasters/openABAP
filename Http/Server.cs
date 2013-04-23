@@ -54,8 +54,8 @@ namespace openABAP.Http
 			// compile
 			openABAP.Compiler.Compiler compiler = new openABAP.Compiler.Compiler("temp.abap");
 			try {
-				openABAP.Compiler.Program prg = compiler.Compile();
-				prg.Run ();
+				compiler.Compile();
+				compiler.Run ();
 				p.outputStream.WriteLine(openABAP.Runtime.Runtime.Output);
 			} catch (openABAP.Compiler.CompilerError ex) {
 				p.outputStream.WriteLine(ex.Message);

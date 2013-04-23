@@ -17,6 +17,11 @@ namespace openABAP.Compiler
 			return this.Text;
 		}
 
+		public System.Type GetRuntimeType()
+		{
+			return typeof(openABAP.Runtime.CharValue);
+		}
+
 		public void PushFormattedString( ILGenerator il )
 		{
 			il.Emit (OpCodes.Ldstr, this.Text);
@@ -46,6 +51,12 @@ namespace openABAP.Compiler
 		{
 			return Convert.ToString(this.Value);
 		}
+
+		public System.Type GetRuntimeType()
+		{
+			return typeof(openABAP.Runtime.IntValue);
+		}
+
 		public void PushFormattedString( ILGenerator il )
 		{
 			il.Emit (OpCodes.Ldstr, this.ToString ());

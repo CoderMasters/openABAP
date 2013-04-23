@@ -43,12 +43,8 @@
     <Compile Include="Compiler\CompilerError.cs" />
     <Compile Include="Coco\Parser.cs" />
     <Compile Include="Coco\Scanner.cs" />
-    <Compile Include="Compiler\Class.cs" />
     <Compile Include="Compiler\Command.cs" />
-    <Compile Include="Compiler\Data.cs" />
-    <Compile Include="Compiler\Method.cs" />
     <Compile Include="Compiler\Move.cs" />
-    <Compile Include="Compiler\Program.cs" />
     <Compile Include="Compiler\Write.cs" />
     <Compile Include="Compiler\Types.cs" />
     <Compile Include="Compiler\Literal.cs" />
@@ -57,8 +53,10 @@
     <Compile Include="Compiler\Compute.cs" />
     <Compile Include="Http\SimpleHttpServer.cs" />
     <Compile Include="Http\Server.cs" />
-    <Compile Include="Compiler\IfVariable.cs" />
     <Compile Include="Compiler\IfValue.cs" />
+    <Compile Include="Compiler\ClassBuilder.cs" />
+    <Compile Include="Compiler\Field.cs" />
+    <Compile Include="Compiler\IfVariable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ABAP\Test.abap" />

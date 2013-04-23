@@ -7,7 +7,7 @@ namespace openABAP.Compiler
 	public class Compute : ExecutableCommand
 	{
 		public IfExpression Expression = null;
-		public Data Target = null;
+		public IfVariable Target = null;
 
 		public Compute (openABAP.Coco.Token t)
 			: base(t)
@@ -17,7 +17,8 @@ namespace openABAP.Compiler
 		public override void BuildAssembly( ILGenerator il )
 		{
 			System.Type[] types = {typeof(openABAP.Runtime.IfValue)};
-			MethodInfo mi = this.Target.getType().getRuntimeType().GetMethod("Set", types);
+			System.Type t = this.Target.GetRuntimeType();
+			MethodInfo mi = t.GetMethod("Set", types);
 			this.Target.PushValue( il );
 			this.Expression.PushValue( il );
 			il.EmitCall (OpCodes.Callvirt, mi, null);

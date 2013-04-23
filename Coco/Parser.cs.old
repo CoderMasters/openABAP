@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Text;
 using System.Reflection;
+using System.Reflection.Emit;
 using openABAP.Compiler;
+using openABAP.Runtime;
 
 
 
@@ -57,69 +59,9 @@ public class Parser {
 	public Token la;   // lookahead token
 	int errDist = minErrDist;
 
-public Program Program = null;
-	private Class CurrentClass = null;
-	private Method CurrentMethod = null;
-	private Visibility CurrentVisibility = Visibility.publ;
-
-	public void AddMethod( Method m )
-	{
-		if (CurrentClass != null) 
-		{
-			CurrentClass.AddMethod( m );
-		} else {
-			SemErr("method definition " + m.Name + " outside a class");
-		}
-	}
-
-	public void AddCommand( ExecutableCommand cmd )
-	{
-		if (CurrentMethod != null) 
-		{
-			CurrentMethod.AddCommand( cmd );
-		} else {
-			SemErr("command outside a method");
-		}
-	}
-
-	public void AddData( Data data )
-	{
-		if (CurrentMethod != null) 
-		{
-			try {
-				CurrentMethod.AddLocalData( data );	
-			} catch (ArgumentException) {
-				SemErr("data" + data.Name + " already defined in method" ); 
-			}
-		} 
-		else if (CurrentClass != null)
-		{
-			CurrentClass.AddAttribute( data );
-		}
-		else {
-			//fehler
-			SemErr("missplaced data declaration");
-		}				
-	}
+public openABAP.Compiler.Compiler Context = null;
 	
-	public Data GetVariable(string name)
-	{
-		Data result = null;
-		if (CurrentMethod != null) 
-		{
-			result = CurrentMethod.GetLocalData(name);
-		}
-		if (result == null && CurrentClass != null) 
-		{
-			result = CurrentClass.GetAttribute(name);
-		}
-		if (result == null) {
-			SemErr("unknown variable " + name);
-		}
-		return result;
-	}
-
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 
 
@@ -183,7 +125,7 @@ public Program Program = null;
 	void openABAP() {
 		Expect(10);
 		Expect(3);
-		Program = new Program(t.val); 
+		Context.DefineProgram(t.val); 
 		Expect(5);
 		while (la.kind == 11) {
 			class_command();
@@ -194,16 +136,16 @@ public Program Program = null;
 		Expect(11);
 		Expect(3);
 		if (la.kind == 12) {
-			class_definition(t.val.ToUpper());
+			class_definition(t.val);
 		} else if (la.kind == 13) {
-			class_implementation(t.val.ToUpper());
+			class_implementation(t.val);
 		} else SynErr(46);
 	}
 
 	void class_definition(string name) {
 		Expect(12);
 		Expect(5);
-		CurrentClass = new Class(t); CurrentClass.Name = name; Program.AddClass( CurrentClass ); 
+		Context.DefineClass(name); 
 		if (la.kind == 15) {
 			public_section();
 		}
@@ -215,26 +157,25 @@ public Program Program = null;
 		}
 		Expect(14);
 		Expect(5);
-		CurrentClass = null; 
 	}
 
 	void class_implementation(string name) {
 		Expect(13);
 		Expect(5);
-		CurrentClass = Program.GetClass( name ); 
+		Context.ImplementClass( name ); 
 		while (la.kind == 21) {
 			method_command();
 		}
 		Expect(14);
 		Expect(5);
-		CurrentClass = null; 
+		Context.EndClass( ); 
 	}
 
 	void public_section() {
 		Expect(15);
 		Expect(18);
 		Expect(5);
-		CurrentVisibility = Visibility.publ; 
+		Context.CurrentVisibility = Visibility.publ; 
 		while (StartOf(1)) {
 			section();
 		}
@@ -244,7 +185,7 @@ public Program Program = null;
 		Expect(16);
 		Expect(18);
 		Expect(5);
-		CurrentVisibility = Visibility.prot; 
+		Context.CurrentVisibility = Visibility.prot; 
 		while (StartOf(1)) {
 			section();
 		}
@@ -254,7 +195,7 @@ public Program Program = null;
 		Expect(17);
 		Expect(18);
 		Expect(5);
-		CurrentVisibility = Visibility.prot; 
+		Context.CurrentVisibility = Visibility.prot; 
 		while (StartOf(1)) {
 			section();
 		}
@@ -263,14 +204,14 @@ public Program Program = null;
 	void method_command() {
 		Expect(21);
 		Expect(3);
-		CurrentMethod = CurrentClass.GetMethod( t.val ); 
+		Context.ImplementMethod( t ); 
 		Expect(5);
 		while (StartOf(2)) {
-			command();
+			command_block();
 		}
 		Expect(22);
 		Expect(5);
-		CurrentMethod =  null; 
+		Context.EndMethod( t ); 
 	}
 
 	void section() {
@@ -287,20 +228,16 @@ public Program Program = null;
 
 	void methods_command() {
 		Expect(19);
-		CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:false ); 
 		Expect(3);
-		CurrentMethod.Name = t.val; 
+		Context.DefineMethod(t, isStatic:false); 
 		Expect(5);
-		AddMethod( CurrentMethod ); CurrentMethod = null; 
 	}
 
 	void class_methods_command() {
 		Expect(20);
-		CurrentMethod = new Method(t:t, v:CurrentVisibility, staticMember:true ); 
 		Expect(3);
-		CurrentMethod.Name = t.val; 
+		Context.DefineMethod(t, isStatic:true); 
 		Expect(5);
-		AddMethod( CurrentMethod ); CurrentMethod = null; 
 	}
 
 	void data_command() {
@@ -333,7 +270,39 @@ public Program Program = null;
 		Expect(5);
 	}
 
-	void command() {
+	void data_parameter(bool isStatic) {
+		Expect(3);
+		string name = t.val; TypeDescr type = new Runtime.BuildinType(); 
+		if (la.kind == 26) {
+			data_type(out type);
+		}
+		Context.DefineField(name, type, isStatic); 
+	}
+
+	void data_type(out TypeDescr type) {
+		Expect(26);
+		type = null; BuildinType bt; 
+		if (la.kind == 3) {
+			Get();
+			type = new Runtime.NamedType(t.val); 
+		} else if (StartOf(3)) {
+			buildintype(out bt);
+			type = bt; 
+		} else SynErr(50);
+	}
+
+	void buildintype(out Runtime.BuildinType type) {
+		type = null; 
+		if (la.kind == 34 || la.kind == 35 || la.kind == 36) {
+			fixlentype(out type);
+		} else if (la.kind == 37 || la.kind == 38) {
+			varlentype(out type);
+		} else if (la.kind == 39) {
+			packedtype(out type);
+		} else SynErr(51);
+	}
+
+	void command_block() {
 		if (la.kind == 24) {
 			data_command();
 		} else if (la.kind == 23) {
@@ -342,7 +311,7 @@ public Program Program = null;
 			move_command();
 		} else if (la.kind == 3 || la.kind == 4) {
 			compute_command();
-		} else SynErr(50);
+		} else SynErr(52);
 	}
 
 	void write_command() {
@@ -356,9 +325,9 @@ public Program Program = null;
 				cmd = new Write(t); 
 				write_parameter(cmd);
 			}
-		} else if (StartOf(3)) {
+		} else if (StartOf(4)) {
 			write_parameter(cmd);
-		} else SynErr(51);
+		} else SynErr(53);
 		Expect(5);
 	}
 
@@ -366,55 +335,21 @@ public Program Program = null;
 		Compiler.IfValue aValue;   
 		Expect(30);
 		Move cmd = new Move(t); 
-		value(out aValue);
-		cmd.setSource( aValue ); 
+		value(out cmd.Source);
 		Expect(31);
-		variable(out aValue);
-		cmd.setTarget( (Data)aValue );  
+		variable(out cmd.Target);
 		Expect(5);
-		cmd.End(t); AddCommand( cmd ); 
+		Context.EmitCommand( cmd); 
 	}
 
 	void compute_command() {
-		IfValue target; 
+		openABAP.Compiler.IfVariable target; 
 		variable(out target);
-		Compute cmd = new Compute(t); cmd.Target = (Data)target; 
+		Compute cmd = new Compute(t); cmd.Target = target; 
 		Expect(44);
 		expression(out cmd.Expression);
 		Expect(5);
-		cmd.End(t); AddCommand( cmd ); 
-	}
-
-	void data_parameter(bool isStatic) {
-		Expect(3);
-		Compiler.Data cmd = new Compiler.Data(t, c:CurrentClass, v:CurrentVisibility, staticMember:isStatic); AddData( cmd ); 
-		if (la.kind == 26) {
-			data_type(cmd);
-		}
-		cmd.End(t); 
-	}
-
-	void data_type(Compiler.Data cmd) {
-		Runtime.BuildinType aType; 
-		Expect(26);
-		if (la.kind == 3) {
-			Get();
-			cmd.setType( new Runtime.NamedType(t.val) ); 
-		} else if (StartOf(4)) {
-			buildintype(out aType);
-			cmd.setType( aType ); 
-		} else SynErr(52);
-	}
-
-	void buildintype(out Runtime.BuildinType aType) {
-		aType = null; 
-		if (la.kind == 34 || la.kind == 35 || la.kind == 36) {
-			fixlentype(out aType);
-		} else if (la.kind == 37 || la.kind == 38) {
-			varlentype(out aType);
-		} else if (la.kind == 39) {
-			packedtype(out aType);
-		} else SynErr(53);
+		cmd.End(t); Context.EmitCommand( cmd ); 
 	}
 
 	void fixlentype(out Runtime.BuildinType aType) {
@@ -443,7 +378,7 @@ public Program Program = null;
 		if (la.kind == 27) {
 			Get();
 			Expect(1);
-			aType.setLength( Convert.ToInt32(t.val) ); 
+			aType.setLength ( Convert.ToInt32(t.val) ); 
 		}
 	}
 
@@ -470,7 +405,7 @@ public Program Program = null;
 			format(cmd);
 		}
 		value(out cmd.Value);
-		cmd.EndLine = t.line; cmd.End(t); AddCommand( cmd ); 
+		cmd.End(t); Context.EmitCommand( cmd ); 
 	}
 
 	void format(Write cmd) {
@@ -479,11 +414,12 @@ public Program Program = null;
 	}
 
 	void value(out Compiler.IfValue value) {
-		value = null; 
+		value = null; IfVariable var=null; 
 		if (la.kind == 1 || la.kind == 2) {
 			literal(out value);
 		} else if (la.kind == 3 || la.kind == 4) {
-			variable(out value);
+			variable(out var);
+			value = var; 
 		} else SynErr(56);
 	}
 
@@ -498,22 +434,21 @@ public Program Program = null;
 		} else SynErr(57);
 	}
 
-	void variable(out Compiler.IfValue variable) {
+	void variable(out Compiler.IfVariable variable) {
 		Scanner.ignore_space = false; 
 		while (la.kind == 4) {
 			Get();
 		}
 		Expect(3);
-		variable = GetVariable(t.val); 
-		while (la.kind == 42 || la.kind == 43) {
+		variable = Context.GetVariable( t.val ); 
+		while (la.kind == 6 || la.kind == 42 || la.kind == 43) {
 			if (la.kind == 42) {
 				instance_member();
-			} else {
+			} else if (la.kind == 43) {
 				class_member();
+			} else {
+				struct_field();
 			}
-		}
-		while (la.kind == 6) {
-			struct_field();
 		}
 		if (la.kind == 7) {
 			Get();
@@ -616,8 +551,8 @@ public Program Program = null;
 		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		{x,T,T,T, T,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,T, x,x,x,x, x,x,x},
+		{x,T,T,T, T,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x},
 		{x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x}
 
@@ -683,10 +618,10 @@ public class Errors {
 			case 47: s = "invalid section"; break;
 			case 48: s = "invalid data_command"; break;
 			case 49: s = "invalid class_data_command"; break;
-			case 50: s = "invalid command"; break;
-			case 51: s = "invalid write_command"; break;
-			case 52: s = "invalid data_type"; break;
-			case 53: s = "invalid buildintype"; break;
+			case 50: s = "invalid data_type"; break;
+			case 51: s = "invalid buildintype"; break;
+			case 52: s = "invalid command_block"; break;
+			case 53: s = "invalid write_command"; break;
 			case 54: s = "invalid fixlentype"; break;
 			case 55: s = "invalid varlentype"; break;
 			case 56: s = "invalid value"; break;

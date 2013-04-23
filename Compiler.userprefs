@@ -1,25 +1,37 @@
 ﻿<Properties GitUserInfo="UsingMD">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Coco\openABAP.ATG">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="c:\Users\Torsten\Documents\GitHub\openABAP\Compiler\Field.cs">
     <Files>
-      <File FileName="Coco\openABAP.ATG" Line="1" Column="1" />
+      <File FileName="Coco\openABAP.ATG" Line="170" Column="56" />
+      <File FileName="Compiler\Compiler.cs" Line="216" Column="1" />
+      <File FileName="Compiler\ClassBuilder.cs" Line="54" Column="1" />
+      <File FileName="c:\Users\Torsten\Documents\GitHub\openABAP\Runtime\BuildinType.cs" Line="58" Column="1" />
+      <File FileName="c:\Users\Torsten\Documents\GitHub\openABAP\Coco\Parser.cs" Line="279" Column="1" />
+      <File FileName="c:\Users\Torsten\Documents\GitHub\openABAP\Compiler\Field.cs" Line="33" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Compiler" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Coco" expanded="True">
-              <Node name="openABAP.ATG" selected="True" />
+            <Node name="Coco" expanded="True" />
+            <Node name="Compiler" expanded="True">
+              <Node name="Field.cs" selected="True" />
             </Node>
-            <Node name="Compiler" expanded="True" />
             <Node name="Http" expanded="True" />
           </Node>
           <Node name="Runtime" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True" selected="True">
+          <Node name="Compiler" expanded="True">
+            <Node name="openABAP" expanded="True">
+              <Node name="Compiler" expanded="True" />
+            </Node>
+          </Node>
+          <Node name="Runtime" expanded="True" />
+        </State>
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State />
@@ -28,7 +40,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="C:\Users\Torsten\Documents\GitHub\openABAP\Coco\Parser.cs" line="518" column="11" />
+      <Breakpoint file="c:\Users\Torsten\Documents\GitHub\openABAP\Compiler\Field.cs" line="28" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

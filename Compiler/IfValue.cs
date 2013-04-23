@@ -7,7 +7,7 @@ namespace openABAP.Compiler
 	{
 		void PushFormattedString( ILGenerator il );
 		void PushValue( ILGenerator il );
+		System.Type GetRuntimeType();
 	}
-	
 }
 
