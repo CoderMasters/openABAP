@@ -22,11 +22,6 @@ namespace openABAP.Compiler
 			return typeof(openABAP.Runtime.CharValue);
 		}
 
-		public void PushFormattedString( ILGenerator il )
-		{
-			il.Emit (OpCodes.Ldstr, this.Text);
-		}
-
 		public void PushValue( ILGenerator il )
 		{
 			System.Type[] types = new System.Type[2];
@@ -56,11 +51,7 @@ namespace openABAP.Compiler
 		{
 			return typeof(openABAP.Runtime.IntValue);
 		}
-
-		public void PushFormattedString( ILGenerator il )
-		{
-			il.Emit (OpCodes.Ldstr, this.ToString ());
-		}
+		
 		public void PushValue( ILGenerator il )
 		{
 			System.Type[] types = new System.Type[1];

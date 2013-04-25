@@ -39,8 +39,26 @@
     <Compile Include="DecValue.cs" />
     <Compile Include="TypeDescr.cs" />
     <Compile Include="Runtime.cs" />
+    <Compile Include="SQL\Database.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DDic\" />
+    <Folder Include="SQL\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SQL\init_database.sql" />
+    <None Include="SQL\SQLite\System.Data.SQLite.dll" />
+    <None Include="SQL\SQLite\System.Data.SQLite.Linq.dll" />
+    <None Include="SQL\SQLite\System.Data.SQLite.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>SQL\SQLite\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>SQL\SQLite\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Data" />
+    <Reference Include="System" />
   </ItemGroup>
 </Project>

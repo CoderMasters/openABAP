@@ -22,12 +22,6 @@ namespace openABAP.Compiler
 			return this.fi.FieldType;
 		}
 
-		public void PushFormattedString( ILGenerator il )
-		{
-			this.PushValue( il );
-			il.EmitCall (OpCodes.Callvirt, fi.FieldType.GetMethod("OutputString"), null);
-		}
-
 		public void PushValue( ILGenerator il )
 		{
 			if ( ( this.fi.Attributes & FieldAttributes.Static) == 0)

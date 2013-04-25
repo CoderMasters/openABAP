@@ -1,3 +1,10 @@
+2013-04-25  Torsten  <torsten.manhardt@gmx.de>
+
+	* Write.cs:
+	* Field.cs:
+	* IfValue.cs:
+	* Literal.cs: 
+
 2013-04-23  Torsten  <torsten.manhardt@gmx.de>
 
 	* Move.cs:

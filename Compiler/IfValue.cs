@@ -5,7 +5,6 @@ namespace openABAP.Compiler
 {
 	public interface IfValue
 	{
-		void PushFormattedString( ILGenerator il );
 		void PushValue( ILGenerator il );
 		System.Type GetRuntimeType();
 	}

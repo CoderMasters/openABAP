@@ -16,14 +16,16 @@ namespace openABAP.Compiler
 
 		public override void BuildAssembly( ILGenerator il )
 		{
-			System.Type[] types = { typeof(String) };
+			System.Type[] types = { typeof(Runtime.IfValue) };
+			System.Reflection.MethodInfo mi = typeof(openABAP.Runtime.Runtime).GetMethod("Write", types);
 			if (Format != null && Format.Equals("/")) {
-				il.Emit(OpCodes.Ldstr, "\n");
-				il.EmitCall(OpCodes.Call, typeof(openABAP.Runtime.Runtime).GetMethod("Write", types), null);
+				StringLiteral nl = new StringLiteral( "\n" );
+				nl.PushValue(il);
+				il.EmitCall(OpCodes.Call, mi, null);
 			}
 			//push formatted string of output value to stack
-			this.Value.PushFormattedString(il);
-			il.EmitCall(OpCodes.Call, typeof(openABAP.Runtime.Runtime).GetMethod("Write", types), null);		
+			this.Value.PushValue(il);
+			il.EmitCall(OpCodes.Call, mi, null);		
 		}
 	}
 }

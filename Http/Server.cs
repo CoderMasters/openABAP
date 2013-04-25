@@ -31,7 +31,7 @@ namespace openABAP.Http
 			} else {
 				//return static file
 				try {
-					FileInfo f = new FileInfo(p.http_url.TrimStart('/'));
+					FileInfo f = new FileInfo("static" + p.http_url);
 					if (f.Exists) {
 						StreamReader s = new StreamReader(f.FullName);
 						p.writeSuccess();

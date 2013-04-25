@@ -85,11 +85,11 @@ namespace Bend.Util {
         }
 
         public void readHeaders() {
-            Console.WriteLine("readHeaders()");
+            //Console.WriteLine("readHeaders()");
             String line;
             while ((line = streamReadLine(inputStream)) != null) {
                 if (line.Equals("")) {
-                    Console.WriteLine("got headers");
+                    //Console.WriteLine("got headers");
                     return;
                 }
                 
@@ -104,7 +104,7 @@ namespace Bend.Util {
                 }
                     
                 string value = line.Substring(pos, line.Length - pos);
-                Console.WriteLine("header: {0}:{1}",name,value);
+                //Console.WriteLine("header: {0}:{1}",name,value);
                 httpHeaders[name] = value;
             }
         }

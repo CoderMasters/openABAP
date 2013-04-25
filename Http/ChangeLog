@@ -1,3 +1,10 @@
+2013-04-25  Torsten  <torsten.manhardt@gmx.de>
+
+	* Test.abap:
+	* client.js:
+	* Server.cs:
+	* SimpleHttpServer.cs: 
+
 2013-04-23  Torsten  <torsten.manhardt@gmx.de>
 
 	* Server.cs: 

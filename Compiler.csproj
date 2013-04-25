@@ -21,10 +21,9 @@
     <WarningLevel>2</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>False</ConsolePause>
-    <Commandlineparameters>../../ABAP/Test.abap</Commandlineparameters>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="./Coco.exe openABAP.ATG -namespace openABAP.Coco" workingdir="${SolutionDir}/Coco" externalConsole="True" pauseExternalConsole="True" />
+        <Command type="BeforeBuild" command="mono Coco.exe openABAP.ATG -namespace openABAP.Coco" workingdir="${ProjectDir}\Coco" pauseExternalConsole="True" />
       </CustomCommands>
     </CustomCommands>
     <GenerateDocumentation>True</GenerateDocumentation>
@@ -59,7 +58,6 @@
     <Compile Include="Compiler\IfVariable.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ABAP\Test.abap" />
     <None Include="ToDo.txt" />
     <None Include="Coco\Coco.exe" />
     <None Include="Coco\openABAP.ATG" />
@@ -67,8 +65,7 @@
     <None Include="Coco\Parser.frame" />
     <None Include="Coco\Scanner.cs.old" />
     <None Include="Coco\Scanner.frame" />
-    <None Include="Http\client.js" />
-    <None Include="Http\Test.abap" />
+    <None Include="Http\static\client.js" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -86,9 +83,9 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <Folder Include="ABAP\" />
     <Folder Include="Coco\" />
     <Folder Include="Http\" />
+    <Folder Include="Http\static\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
